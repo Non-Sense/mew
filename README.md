@@ -6,7 +6,6 @@
 1. コマンド叩けるウィンドウを出します  
 1. カレントディレクトリを`docker-compose.yml`があるディレクトリにします  
 1. `docker-compose up -d`を叩く  
-1. `init-mysql.[bat|sh]`をホストPCで実行: SQLテーブルが作成されます
 
 サーバはポート8080に繋がっているので、URLは`http://localhost:8080`です  
 

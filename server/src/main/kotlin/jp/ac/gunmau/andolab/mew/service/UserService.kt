@@ -13,12 +13,16 @@ class UserService @Autowired constructor(private val dao: UserMapper){
         return dao.insert(user)>0
     }
 
-    fun select(id:Int):User{
+    fun select(id:Int):User?{
         return dao.selectWithId(id)
     }
 
-    fun select(nameId:String): User{
+    fun select(nameId:String): User?{
         return dao.selectWithNameId(nameId)
+    }
+
+    fun findByName(pattern: String): List<User>{
+        return dao.findByName(pattern)
     }
 
     fun selectAll(): List<User>{
