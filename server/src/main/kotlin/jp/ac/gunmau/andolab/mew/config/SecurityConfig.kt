@@ -18,10 +18,13 @@ class SecurityConfig:WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()
+            .anyRequest().permitAll()
             // 認証がいらないページの設定
-            .antMatchers("/").permitAll()
+            //.antMatchers("/**").permitAll()
             // 上のやつ以外は全部認証いる
-            .anyRequest().authenticated()
+            //.anyRequest().authenticated()
+            .and()
+            .csrf().disable()
     }
 
 }

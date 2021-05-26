@@ -22,12 +22,7 @@ services:
       TZ: 'Asia/Tokyo'
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: database
-    command: [
-        '--wait_timeout=86400',
-        '--character-set-server=utf8mb4',
-        '--collation-server=utf8mb4_unicode_ci'
-    ]
     volumes:
       - ./db/data:/var/lib/mysql
-      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./db/sql:/docker-entrypoint-initdb.d
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+      - ./db/conf.d/:/etc/mysql/conf.d
