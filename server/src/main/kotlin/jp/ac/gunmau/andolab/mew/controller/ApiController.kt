@@ -6,27 +6,44 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
-import java.util.logging.Logger
+import java.lang.NullPointerException
 
 @RestController
+@RequestMapping("/api")
 class ApiController @Autowired constructor(private val userService: UserService){
-    @RequestMapping("/")
+
+    companion object{
+        private val bcryptRegex = Regex("""^\$2[ayb]\$.{56}$""")
+    }
+
+    @RequestMapping
     fun index():String{
         return "Hello"
     }
 
+    @RequestMapping("/test")
+    fun test():String{
+        return "valid"
+    }
+
     /**
-     * ユーザ追加 (POST: /user)
+     * ユーザ追加 (POST: /signup)
      *
-     * ex: {"nameId":"testuser","name":"The User","password":"$2a$10$N.8tJRt7h7cp4lEF0J0DTObCrcPKlFQ7hmmvh3ku3NQRi1NcPLDR."}
-     * パスワードハッシュはbcryptを使うけどハッシュ化するのはサーバかクライアント側か決めていない
-     * とりあえずクライアント側に任せることにする
+     * e.g. {"nameId":"testuser","name":"The User","password":"testpassword"}
+     * パスワードハッシュはbcryptを使うけどハッシュ化するのはサーバ側にします(ログインするときに平文でパスワード送るので)
+     * すでにBCryptだったらそのまま採用します
      */
-    @PostMapping("/user")
+    @PostMapping("/signup")
     @ResponseBody
     fun addUser(@RequestBody user: User): ResponseEntity<String>{
-        Logger.getLogger("RestApi").info(user.toString())
+        if(!user.validateOnSignup())
+            return ResponseEntity(null, HttpStatus.BAD_REQUEST)
+        if(!user.password.matches(bcryptRegex)) {
+            val encoder = BCryptPasswordEncoder()
+            user.password = encoder.encode(user.password)
+        }
         try {
             userService.insert(user)
         } catch (e: DuplicateKeyException){
