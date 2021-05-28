@@ -7,7 +7,6 @@ import org.springframework.boot.web.servlet.error.ErrorController as SpringError
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
-import java.util.logging.Logger
 import javax.servlet.RequestDispatcher
 import javax.servlet.http.HttpServletRequest
 
@@ -41,13 +40,11 @@ class ErrorController: SpringErrorController {
     }
 
     private fun getCode(str:String?):HttpStatus{
-        Logger.getLogger("ErrorCode").info(str)
-        return when(str){
-            "400" -> HttpStatus.BAD_REQUEST
-            "403" -> HttpStatus.FORBIDDEN
-            "404" -> HttpStatus.NOT_FOUND
-            "405" -> HttpStatus.METHOD_NOT_ALLOWED
-            else -> HttpStatus.INTERNAL_SERVER_ERROR
-        }
+        try {
+            str?.toInt()?.let {
+                return HttpStatus.valueOf(it)
+            }
+        } catch (e: Exception){}
+        return HttpStatus.INTERNAL_SERVER_ERROR
     }
 }
