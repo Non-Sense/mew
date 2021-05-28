@@ -1,6 +1,7 @@
 package jp.ac.gunmau.andolab.mew.controller
 
 import jp.ac.gunmau.andolab.mew.model.User
+import jp.ac.gunmau.andolab.mew.model.UserView
 import jp.ac.gunmau.andolab.mew.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DuplicateKeyException
@@ -60,17 +61,23 @@ class ApiController @Autowired constructor(private val userService: UserService)
      */
     @GetMapping("/user")
     fun findUserByNameId(@RequestParam(name="nameid",required = false) nameId:String?,
-                         @RequestParam(name="id",required = false) id:Int?) :ResponseEntity<User>{
+                         @RequestParam(name="id",required = false) id:Int?) :ResponseEntity<UserView>{
 
         nameId?:id?:return ResponseEntity(null,HttpStatus.BAD_REQUEST)
 
+        val p: (User?)->ResponseEntity<UserView> = {
+            if(it == null)
+                ResponseEntity(null, HttpStatus.NOT_FOUND)
+            else
+                ResponseEntity(UserView(it), HttpStatus.OK)
+        }
         if(nameId!=null){
             userService.select(nameId).let {
-                return ResponseEntity(it, if (it!=null) HttpStatus.OK else HttpStatus.NOT_FOUND)
+                return p(it)
             }
         }
         userService.select(id!!).let {
-            return ResponseEntity(it, if (it!=null) HttpStatus.OK else HttpStatus.NOT_FOUND)
+            return p(it)
         }
     }
 
@@ -82,14 +89,14 @@ class ApiController @Autowired constructor(private val userService: UserService)
      * あいまい検索になっているはず
      */
     @GetMapping("/finduser")
-    fun findUserById(@RequestParam(name="name",required = true) name:String):ResponseEntity<List<User>>{
+    fun findUserById(@RequestParam(name="name",required = true) name:String):ResponseEntity<List<UserView>>{
         var q = name
         if(!name.startsWith('%') && !name.endsWith('%'))
             q = "%$name%"
         userService.findByName(q).let {
             if(it.isEmpty())
-                return ResponseEntity(it,HttpStatus.NOT_FOUND)
-            return ResponseEntity(it,HttpStatus.OK)
+                return ResponseEntity(listOf(),HttpStatus.NOT_FOUND)
+            return ResponseEntity(it.map{ elm->UserView(elm)},HttpStatus.OK)
         }
     }
 
@@ -99,7 +106,7 @@ class ApiController @Autowired constructor(private val userService: UserService)
      * テスト用:そのうち消す
      */
     @GetMapping("/users")
-    fun getAllUser(): ResponseEntity<List<User>>{
-        return ResponseEntity(userService.selectAll(),HttpStatus.OK)
+    fun getAllUser(): ResponseEntity<List<UserView>>{
+        return ResponseEntity(userService.selectAll().map{ UserView(it) },HttpStatus.OK)
     }
 }
