@@ -22,9 +22,6 @@ interface CommentMapper {
     @Select("SELECT * FROM comment WHERE rate = #{rt}")
     fun selectWithRate(rt: Int): Comment?
 
-    @Select("SELECT * FROM comment WHERE comment.book_id = #{bookId}")
-    fun findByBookId(bookId: Int): List<Comment>
-
     @Select("SELECT * FROM comment LIMIT 300")
     fun selectAll(): List<Comment>
 }
