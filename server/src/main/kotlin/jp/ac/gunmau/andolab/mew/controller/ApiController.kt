@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
-import java.lang.NullPointerException
 
 @RestController
 @RequestMapping("/api")
@@ -53,6 +52,14 @@ class ApiController @Autowired constructor(private val userService: UserService)
         return ResponseEntity(null, HttpStatus.OK)
     }
 
+
+    private fun responseEntityUtil(user: User?):ResponseEntity<UserView>{
+        return if(user == null)
+            ResponseEntity(null, HttpStatus.NOT_FOUND)
+        else
+            ResponseEntity(UserView(user), HttpStatus.OK)
+    }
+
     /**
      * ユーザ取得 (GET: /user?[nemeid|id]=)
      *
@@ -65,20 +72,24 @@ class ApiController @Autowired constructor(private val userService: UserService)
 
         nameId?:id?:return ResponseEntity(null,HttpStatus.BAD_REQUEST)
 
-        val p: (User?)->ResponseEntity<UserView> = {
-            if(it == null)
-                ResponseEntity(null, HttpStatus.NOT_FOUND)
-            else
-                ResponseEntity(UserView(it), HttpStatus.OK)
-        }
         if(nameId!=null){
             userService.select(nameId).let {
-                return p(it)
+                return responseEntityUtil(it)
             }
         }
         userService.select(id!!).let {
-            return p(it)
+            return responseEntityUtil(it)
         }
+    }
+
+    /**
+     * ユーザ取得 (GET: /user/{nameid})
+     *
+     * ログイン用IDでユーザを取得する
+     */
+    @GetMapping("/user/{nameid}")
+    fun getUser(@PathVariable("nameid") nameId: String): ResponseEntity<UserView>{
+        return responseEntityUtil(userService.select(nameId))
     }
 
 
