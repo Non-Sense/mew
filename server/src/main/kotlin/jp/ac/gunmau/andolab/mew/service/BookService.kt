@@ -17,7 +17,7 @@ class BookService @Autowired constructor(private val dao: BookMapper) {
         return dao.selectWithId(id)
     }
 
-    fun selectByUserId(userId: Int):Book?{
+    fun selectByUserId(userId: Int):List<Book>{
         return dao.selectWithUserId(userId)
     }
 
