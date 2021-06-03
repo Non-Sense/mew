@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Select
 
 @Mapper
 interface CommentMapper {
-    @Insert("INSERT INTO comment(book_id, user_id, rate, comment) VALUES(#{bookId}, #{userId}, #{rt}, #{comment})")
+    @Insert("INSERT INTO comment(book_id, user_id, rate, comment) VALUES(#{bookId}, #{userId}, #{rate}, #{comment})")
     fun insert(model: Comment): Int
 
     @Select("SELECT * FROM comment WHERE comment_id = #{id}")
@@ -19,8 +19,8 @@ interface CommentMapper {
     @Select("SELECT * FROM comment WHERE user_id = #{userId}")
     fun selectWithUserId(userId: Int): Comment?
 
-    @Select("SELECT * FROM comment WHERE rate = #{rt}")
-    fun selectWithRate(rt: Int): Comment?
+    @Select("SELECT * FROM comment WHERE rate = #{rate}")
+    fun selectWithRate(rate: Int): Comment?
 
     @Select("SELECT * FROM comment LIMIT 300")
     fun selectAll(): List<Comment>
