@@ -21,11 +21,11 @@ class BookService @Autowired constructor(private val dao: BookMapper) {
         return dao.selectWithUserId(userId)
     }
 
-    fun findByTitle(pattern: String):List<Book>?{
+    fun findByTitle(pattern: String):List<Book>{
         return dao.findByTitle(pattern)
     }
 
-    fun selectAll():List<Book>?{
+    fun selectAll():List<Book>{
         return dao.selectAll()
     }
 
