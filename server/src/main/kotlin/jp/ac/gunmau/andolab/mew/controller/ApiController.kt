@@ -3,8 +3,10 @@ package jp.ac.gunmau.andolab.mew.controller
 import jp.ac.gunmau.andolab.mew.model.Book
 import jp.ac.gunmau.andolab.mew.model.User
 import jp.ac.gunmau.andolab.mew.model.UserView
+import jp.ac.gunmau.andolab.mew.model.Word
 import jp.ac.gunmau.andolab.mew.service.BookService
 import jp.ac.gunmau.andolab.mew.service.UserService
+import jp.ac.gunmau.andolab.mew.service.WordService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.DuplicateKeyException
@@ -17,7 +19,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api")
 class ApiController @Autowired constructor(
     private val userService: UserService,
-    private val bookService: BookService){
+    private val bookService: BookService,
+    private val wordService: WordService){
 
     companion object{
         private val bcryptRegex = Regex("""^\$2[ayb]\$.{56}$""")
@@ -63,6 +66,11 @@ class ApiController @Autowired constructor(
             ResponseEntity(null, HttpStatus.NOT_FOUND)
         else
             ResponseEntity(obj, HttpStatus.OK)
+    }
+    private fun <T> responseEntityUtil(obj: List<T>):ResponseEntity<List<T>>{
+        if(obj.isEmpty())
+            return ResponseEntity(listOf(),HttpStatus.NOT_FOUND)
+        return ResponseEntity.ok(obj)
     }
     private fun patternUtil(pattern: String):String{
         if(!pattern.startsWith('%') && !pattern.endsWith('%'))
@@ -144,11 +152,7 @@ class ApiController @Autowired constructor(
 
     @GetMapping("/book")
     fun getBook(@RequestParam(name="userid",required = true) userId:Int): ResponseEntity<List<Book>>{
-        bookService.selectByUserId(userId).let {
-            if(it.isEmpty())
-                return ResponseEntity(listOf(), HttpStatus.NOT_FOUND)
-            return responseEntityUtil(it)
-        }
+        return responseEntityUtil(bookService.selectByUserId(userId))
     }
 
     @GetMapping("/book/{id}")
@@ -158,15 +162,50 @@ class ApiController @Autowired constructor(
 
     @GetMapping("/findbook")
     fun findBook(@RequestParam(name="title",required = true) title:String): ResponseEntity<List<Book>>{
-        bookService.findByTitle(patternUtil(title)).let {
-            if(it.isEmpty())
-                return ResponseEntity(listOf(), HttpStatus.NOT_FOUND)
-            return ResponseEntity.ok(it)
-        }
+        return responseEntityUtil(bookService.findByTitle(patternUtil(title)))
     }
 
     @GetMapping("/books")
     fun getAllBook(): ResponseEntity<List<Book>>{
         return ResponseEntity.ok(bookService.selectAll())
     }
+
+
+    @PostMapping("/word")
+    fun postWord(@RequestBody word:Word):ResponseEntity<String>{
+        try {
+            wordService.insert(word)
+        } catch (e: DuplicateKeyException){
+            return ResponseEntity(null, HttpStatus.CONFLICT)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
+    }
+
+    @GetMapping("/word/{id}")
+    fun getWordById(@PathVariable(name="id") id:Int): ResponseEntity<Word>{
+        return responseEntityUtil(wordService.selectById(id))
+    }
+
+    @GetMapping("/word")
+    fun getWord(@RequestParam(name="bookid", required = true) bookId:Int): ResponseEntity<List<Word>>{
+        return responseEntityUtil(wordService.selectByBookId(bookId))
+    }
+
+    @GetMapping("/findword")
+    fun findWord(@RequestParam(name="word",required = false) word: String?,
+                 @RequestParam(name="mean",required = false) mean: String?): ResponseEntity<List<Word>>{
+        word?:mean?:return ResponseEntity(listOf(),HttpStatus.BAD_REQUEST)
+        if(word!=null){
+            return responseEntityUtil(wordService.findByWord(patternUtil(word)))
+        }
+        return responseEntityUtil(wordService.findByMean(patternUtil(mean!!)))
+    }
+
+    @GetMapping("/words")
+    fun getAllWord(): ResponseEntity<List<Word>>{
+        return ResponseEntity.ok(wordService.selectAll())
+    }
+
 }

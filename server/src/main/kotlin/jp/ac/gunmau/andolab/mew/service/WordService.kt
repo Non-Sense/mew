@@ -17,7 +17,7 @@ class WordService @Autowired constructor(private val dao: WordMapper){
         return dao.selectWithId(id)
     }
 
-    fun selectByBookId(bookId: Int): Word?{
+    fun selectByBookId(bookId: Int): List<Word>{
         return dao.selectWithBookId(bookId)
     }
 
