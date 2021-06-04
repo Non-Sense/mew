@@ -19,9 +19,6 @@ interface CommentMapper {
     @Select("SELECT * FROM comment WHERE user_id = #{userId}")
     fun selectWithUserId(userId: Int): Comment?
 
-    @Select("SELECT * FROM comment WHERE rate = #{rate}")
-    fun selectWithRate(rate: Int): Comment?
-
     @Select("SELECT * FROM comment LIMIT 300")
     fun selectAll(): List<Comment>
 }

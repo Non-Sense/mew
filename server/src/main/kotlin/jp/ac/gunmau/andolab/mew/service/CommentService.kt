@@ -25,10 +25,6 @@ class CommentService @Autowired constructor(private val dao: CommentMapper){
         return dao.selectWithUserId(userId)
     }
 
-    fun selectByRate(rate: Int): Comment?{
-        return dao.selectWithRate(rate)
-    }
-
     fun selectAll(): List<Comment>{
         return dao.selectAll()
     }
