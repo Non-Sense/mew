@@ -1,12 +1,7 @@
 package jp.ac.gunmau.andolab.mew.controller
 
-import jp.ac.gunmau.andolab.mew.model.Book
-import jp.ac.gunmau.andolab.mew.model.User
-import jp.ac.gunmau.andolab.mew.model.UserView
-import jp.ac.gunmau.andolab.mew.model.Word
-import jp.ac.gunmau.andolab.mew.service.BookService
-import jp.ac.gunmau.andolab.mew.service.UserService
-import jp.ac.gunmau.andolab.mew.service.WordService
+import jp.ac.gunmau.andolab.mew.model.*
+import jp.ac.gunmau.andolab.mew.service.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.DuplicateKeyException
@@ -20,7 +15,8 @@ import org.springframework.web.bind.annotation.*
 class ApiController @Autowired constructor(
     private val userService: UserService,
     private val bookService: BookService,
-    private val wordService: WordService){
+    private val wordService: WordService,
+    private val commentService: CommentService){
 
     companion object{
         private val bcryptRegex = Regex("""^\$2[ayb]\$.{56}$""")
@@ -206,6 +202,35 @@ class ApiController @Autowired constructor(
     @GetMapping("/words")
     fun getAllWord(): ResponseEntity<List<Word>>{
         return ResponseEntity.ok(wordService.selectAll())
+    }
+
+    @PostMapping("/comment")
+    fun postComment(@RequestBody comment: Comment): ResponseEntity<String>{
+        try {
+            commentService.insert(comment)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
+    }
+
+    @GetMapping("/comment/{id}")
+    fun getCommentById(@PathVariable(name="id") id:Int): ResponseEntity<Comment>{
+        return responseEntityUtil(commentService.selectById(id))
+    }
+
+    @GetMapping("/comment")
+    fun getComment(@RequestParam(name="bookid", required = false) bookId:Int?,
+                   @RequestParam(name="userId", required = false) userId:Int?):ResponseEntity<List<Comment>>{
+        bookId?:userId?:return ResponseEntity(listOf(),HttpStatus.BAD_REQUEST)
+        if(bookId!=null)
+            return responseEntityUtil(commentService.selectByBookId(bookId))
+        return responseEntityUtil(commentService.selectByUserId(userId!!))
+    }
+
+    @GetMapping("/comments")
+    fun getAllComment(): ResponseEntity<List<Comment>>{
+        return ResponseEntity.ok(commentService.selectAll())
     }
 
 }
