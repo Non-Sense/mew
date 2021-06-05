@@ -115,7 +115,7 @@ class ApiController @Autowired constructor(
      * 表示名で検索して返す
      * あいまい検索になっているはず
      */
-    @GetMapping("/finduser")
+    @GetMapping("/user/find")
     fun findUserById(@RequestParam(name="name",required = true) name:String):ResponseEntity<List<UserView>>{
         userService.findByName(patternUtil(name)).let {
             if(it.isEmpty())
@@ -156,7 +156,7 @@ class ApiController @Autowired constructor(
         return responseEntityUtil(bookService.selectById(id))
     }
 
-    @GetMapping("/findbook")
+    @GetMapping("/book/find")
     fun findBook(@RequestParam(name="title",required = true) title:String): ResponseEntity<List<Book>>{
         return responseEntityUtil(bookService.findByTitle(patternUtil(title)))
     }
@@ -189,7 +189,7 @@ class ApiController @Autowired constructor(
         return responseEntityUtil(wordService.selectByBookId(bookId))
     }
 
-    @GetMapping("/findword")
+    @GetMapping("/word/find")
     fun findWord(@RequestParam(name="word",required = false) word: String?,
                  @RequestParam(name="mean",required = false) mean: String?): ResponseEntity<List<Word>>{
         word?:mean?:return ResponseEntity(listOf(),HttpStatus.BAD_REQUEST)
