@@ -16,7 +16,8 @@ class ApiController @Autowired constructor(
     private val userService: UserService,
     private val bookService: BookService,
     private val wordService: WordService,
-    private val commentService: CommentService){
+    private val commentService: CommentService,
+    private val rateService: RateService){
 
     companion object{
         private val bcryptRegex = Regex("""^\$2[ayb]\$.{56}$""")
@@ -231,6 +232,46 @@ class ApiController @Autowired constructor(
     @GetMapping("/comments")
     fun getAllComment(): ResponseEntity<List<Comment>>{
         return ResponseEntity.ok(commentService.selectAll())
+    }
+
+
+    @PostMapping("/rate")
+    fun postRate(@RequestBody rate: Rate):ResponseEntity<String>{
+        try{
+            rateService.insert(rate)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
+    }
+
+    @GetMapping("/rate/{id}")
+    fun getRateById(@PathVariable(name = "id")id: Int): ResponseEntity<Rate>{
+        return responseEntityUtil(rateService.selectByRateId(id))
+    }
+
+    @GetMapping("/rate")
+    fun getRate(@RequestParam(name="bookid", required = false) bookId:Int?,
+                @RequestParam(name="userId", required = false) userId:Int?): ResponseEntity<List<Rate>>{
+        bookId?:userId?:return ResponseEntity(listOf(), HttpStatus.BAD_REQUEST)
+        if(bookId!=null)
+            return responseEntityUtil(rateService.selectByBookId(bookId))
+        return responseEntityUtil(rateService.selectByUserId(userId!!))
+    }
+
+    @GetMapping("/book/{id}/rate")
+    fun getBookRate(@PathVariable(name = "id")bookId: Int): ResponseEntity<HashMap<String,Double?>>{
+        val m = HashMap<String,Double?>()
+        rateService.getAverage(bookId).let {
+            it?:return ResponseEntity(null,HttpStatus.NOT_FOUND)
+            m["avg"] = it
+        }
+        return ResponseEntity.ok(m)
+    }
+
+    @GetMapping("/rates")
+    fun getAllRate(): ResponseEntity<List<Rate>>{
+        return ResponseEntity.ok(rateService.selectAll())
     }
 
 }
