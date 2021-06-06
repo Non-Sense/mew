@@ -14,7 +14,7 @@ interface WordMapper {
     fun selectWithId(id: Int): Word?
 
     @Select("SELECT * FROM word WHERE book_id = #{bookId}")
-    fun selectWithBookId(bookId: Int): Word?
+    fun selectWithBookId(bookId: Int): List<Word>
 
     @Select("SELECT * FROM word WHERE word LIKE #{pattern} LIMIT 300")
     fun findByWord(pattern: String): List<Word>

@@ -1,19 +1,23 @@
 package jp.ac.gunmau.andolab.mew.controller
 
-import jp.ac.gunmau.andolab.mew.model.User
-import jp.ac.gunmau.andolab.mew.model.UserView
-import jp.ac.gunmau.andolab.mew.service.UserService
+import jp.ac.gunmau.andolab.mew.model.*
+import jp.ac.gunmau.andolab.mew.service.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
-import java.lang.NullPointerException
 
 @RestController
 @RequestMapping("/api")
-class ApiController @Autowired constructor(private val userService: UserService){
+class ApiController @Autowired constructor(
+    private val userService: UserService,
+    private val bookService: BookService,
+    private val wordService: WordService,
+    private val commentService: CommentService,
+    private val rateService: RateService){
 
     companion object{
         private val bcryptRegex = Regex("""^\$2[ayb]\$.{56}$""")
@@ -53,6 +57,24 @@ class ApiController @Autowired constructor(private val userService: UserService)
         return ResponseEntity(null, HttpStatus.OK)
     }
 
+
+    private fun <T> responseEntityUtil(obj: T?):ResponseEntity<T>{
+        return if(obj == null)
+            ResponseEntity(null, HttpStatus.NOT_FOUND)
+        else
+            ResponseEntity(obj, HttpStatus.OK)
+    }
+    private fun <T> responseEntityUtil(obj: List<T>):ResponseEntity<List<T>>{
+        if(obj.isEmpty())
+            return ResponseEntity(listOf(),HttpStatus.NOT_FOUND)
+        return ResponseEntity.ok(obj)
+    }
+    private fun patternUtil(pattern: String):String{
+        if(!pattern.startsWith('%') && !pattern.endsWith('%'))
+            return "%$pattern%"
+        return pattern
+    }
+
     /**
      * ユーザ取得 (GET: /user?[nemeid|id]=)
      *
@@ -65,19 +87,25 @@ class ApiController @Autowired constructor(private val userService: UserService)
 
         nameId?:id?:return ResponseEntity(null,HttpStatus.BAD_REQUEST)
 
-        val p: (User?)->ResponseEntity<UserView> = {
-            if(it == null)
-                ResponseEntity(null, HttpStatus.NOT_FOUND)
-            else
-                ResponseEntity(UserView(it), HttpStatus.OK)
-        }
         if(nameId!=null){
             userService.select(nameId).let {
-                return p(it)
+                return responseEntityUtil(if(it!=null)UserView(it) else null)
             }
         }
         userService.select(id!!).let {
-            return p(it)
+            return responseEntityUtil(if(it!=null)UserView(it) else null)
+        }
+    }
+
+    /**
+     * ユーザ取得 (GET: /user/{nameid})
+     *
+     * ログイン用IDでユーザを取得する
+     */
+    @GetMapping("/user/{nameid}")
+    fun getUser(@PathVariable("nameid") nameId: String): ResponseEntity<UserView>{
+        userService.select(nameId).let {
+            return responseEntityUtil(if(it!=null)UserView(it) else null)
         }
     }
 
@@ -88,12 +116,9 @@ class ApiController @Autowired constructor(private val userService: UserService)
      * 表示名で検索して返す
      * あいまい検索になっているはず
      */
-    @GetMapping("/finduser")
+    @GetMapping("/user/find")
     fun findUserById(@RequestParam(name="name",required = true) name:String):ResponseEntity<List<UserView>>{
-        var q = name
-        if(!name.startsWith('%') && !name.endsWith('%'))
-            q = "%$name%"
-        userService.findByName(q).let {
+        userService.findByName(patternUtil(name)).let {
             if(it.isEmpty())
                 return ResponseEntity(listOf(),HttpStatus.NOT_FOUND)
             return ResponseEntity(it.map{ elm->UserView(elm)},HttpStatus.OK)
@@ -109,4 +134,144 @@ class ApiController @Autowired constructor(private val userService: UserService)
     fun getAllUser(): ResponseEntity<List<UserView>>{
         return ResponseEntity(userService.selectAll().map{ UserView(it) },HttpStatus.OK)
     }
+
+    @PostMapping("/book")
+    fun postBook(@RequestBody book:Book): ResponseEntity<String>{
+        try {
+            bookService.insert(book)
+        } catch (e: DuplicateKeyException){
+            return ResponseEntity(null, HttpStatus.CONFLICT)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
+    }
+
+    @GetMapping("/book")
+    fun getBook(@RequestParam(name="userid",required = true) userId:Int): ResponseEntity<List<Book>>{
+        return responseEntityUtil(bookService.selectByUserId(userId))
+    }
+
+    @GetMapping("/book/{id}")
+    fun getBookById(@PathVariable("id") id:Int): ResponseEntity<Book>{
+        return responseEntityUtil(bookService.selectById(id))
+    }
+
+    @GetMapping("/book/find")
+    fun findBook(@RequestParam(name="title",required = true) title:String): ResponseEntity<List<Book>>{
+        return responseEntityUtil(bookService.findByTitle(patternUtil(title)))
+    }
+
+    @GetMapping("/books")
+    fun getAllBook(): ResponseEntity<List<Book>>{
+        return ResponseEntity.ok(bookService.selectAll())
+    }
+
+
+    @PostMapping("/word")
+    fun postWord(@RequestBody word:Word):ResponseEntity<String>{
+        try {
+            wordService.insert(word)
+        } catch (e: DuplicateKeyException){
+            return ResponseEntity(null, HttpStatus.CONFLICT)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
+    }
+
+    @GetMapping("/word/{id}")
+    fun getWordById(@PathVariable(name="id") id:Int): ResponseEntity<Word>{
+        return responseEntityUtil(wordService.selectById(id))
+    }
+
+    @GetMapping("/word")
+    fun getWord(@RequestParam(name="bookid", required = true) bookId:Int): ResponseEntity<List<Word>>{
+        return responseEntityUtil(wordService.selectByBookId(bookId))
+    }
+
+    @GetMapping("/word/find")
+    fun findWord(@RequestParam(name="word",required = false) word: String?,
+                 @RequestParam(name="mean",required = false) mean: String?): ResponseEntity<List<Word>>{
+        word?:mean?:return ResponseEntity(listOf(),HttpStatus.BAD_REQUEST)
+        if(word!=null){
+            return responseEntityUtil(wordService.findByWord(patternUtil(word)))
+        }
+        return responseEntityUtil(wordService.findByMean(patternUtil(mean!!)))
+    }
+
+    @GetMapping("/words")
+    fun getAllWord(): ResponseEntity<List<Word>>{
+        return ResponseEntity.ok(wordService.selectAll())
+    }
+
+    @PostMapping("/comment")
+    fun postComment(@RequestBody comment: Comment): ResponseEntity<String>{
+        try {
+            commentService.insert(comment)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
+    }
+
+    @GetMapping("/comment/{id}")
+    fun getCommentById(@PathVariable(name="id") id:Int): ResponseEntity<Comment>{
+        return responseEntityUtil(commentService.selectById(id))
+    }
+
+    @GetMapping("/comment")
+    fun getComment(@RequestParam(name="bookid", required = false) bookId:Int?,
+                   @RequestParam(name="userId", required = false) userId:Int?):ResponseEntity<List<Comment>>{
+        bookId?:userId?:return ResponseEntity(listOf(),HttpStatus.BAD_REQUEST)
+        if(bookId!=null)
+            return responseEntityUtil(commentService.selectByBookId(bookId))
+        return responseEntityUtil(commentService.selectByUserId(userId!!))
+    }
+
+    @GetMapping("/comments")
+    fun getAllComment(): ResponseEntity<List<Comment>>{
+        return ResponseEntity.ok(commentService.selectAll())
+    }
+
+
+    @PostMapping("/rate")
+    fun postRate(@RequestBody rate: Rate):ResponseEntity<String>{
+        try{
+            rateService.insert(rate)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
+    }
+
+    @GetMapping("/rate/{id}")
+    fun getRateById(@PathVariable(name = "id")id: Int): ResponseEntity<Rate>{
+        return responseEntityUtil(rateService.selectByRateId(id))
+    }
+
+    @GetMapping("/rate")
+    fun getRate(@RequestParam(name="bookid", required = false) bookId:Int?,
+                @RequestParam(name="userId", required = false) userId:Int?): ResponseEntity<List<Rate>>{
+        bookId?:userId?:return ResponseEntity(listOf(), HttpStatus.BAD_REQUEST)
+        if(bookId!=null)
+            return responseEntityUtil(rateService.selectByBookId(bookId))
+        return responseEntityUtil(rateService.selectByUserId(userId!!))
+    }
+
+    @GetMapping("/book/{id}/rate")
+    fun getBookRate(@PathVariable(name = "id")bookId: Int): ResponseEntity<HashMap<String,Double?>>{
+        val m = HashMap<String,Double?>()
+        rateService.getAverage(bookId).let {
+            it?:return ResponseEntity(null,HttpStatus.NOT_FOUND)
+            m["avg"] = it
+        }
+        return ResponseEntity.ok(m)
+    }
+
+    @GetMapping("/rates")
+    fun getAllRate(): ResponseEntity<List<Rate>>{
+        return ResponseEntity.ok(rateService.selectAll())
+    }
+
 }

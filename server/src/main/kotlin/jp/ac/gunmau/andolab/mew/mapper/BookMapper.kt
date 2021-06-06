@@ -14,7 +14,7 @@ interface BookMapper {
     fun selectWithId(id: Int): Book?
 
     @Select("SELECT * FROM book WHERE user_id = #{userId}")
-    fun selectWithUserId(userId: Int): Book?
+    fun selectWithUserId(userId: Int): List<Book>
 
     @Select("SELECT * FROM book WHERE title LIKE #{pattern} LIMIT 300")
     fun findByTitle(pattern: String): List<Book>

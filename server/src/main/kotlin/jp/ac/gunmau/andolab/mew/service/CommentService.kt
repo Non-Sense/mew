@@ -17,16 +17,12 @@ class CommentService @Autowired constructor(private val dao: CommentMapper){
         return dao.selectWithId(id)
     }
 
-    fun selectByBookId(bookId: Int): Comment?{
+    fun selectByBookId(bookId: Int): List<Comment>{
         return dao.selectWithBookId(bookId)
     }
 
-    fun selectByUserId(userId: Int): Comment?{
+    fun selectByUserId(userId: Int): List<Comment>{
         return dao.selectWithUserId(userId)
-    }
-
-    fun selectByRate(rate: Int): Comment?{
-        return dao.selectWithRate(rate)
     }
 
     fun selectAll(): List<Comment>{

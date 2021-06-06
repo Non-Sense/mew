@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `mewdb`.`book` (
     INDEX `user_idx` (`user_id` ASC),
     FOREIGN KEY (`user_id`)
     REFERENCES `mewdb`.`user` (`user_id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
     ENGINE = InnoDB;
 
@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS `mewdb`.`comment` (
     `comment_id` INT NOT NULL AUTO_INCREMENT,
     `book_id` INT NOT NULL,
     `user_id` INT NOT NULL,
-    `rate` INT NULL,
     `comment` VARCHAR(432) NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp,
     PRIMARY KEY (`comment_id`),
@@ -42,7 +41,27 @@ CREATE TABLE IF NOT EXISTS `mewdb`.`comment` (
     INDEX `user_idx` (`user_id` ASC),
     FOREIGN KEY (`book_id`)
     REFERENCES `mewdb`.`book` (`book_id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+    FOREIGN KEY (`user_id`)
+    REFERENCES `mewdb`.`user` (`user_id`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `mewdb`.`rate` (
+    `rate_id` INT NOT NULL AUTO_INCREMENT,
+    `book_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `rate` INT NOT NULL,
+    PRIMARY KEY (`rate_id`),
+    INDEX `book_id_idx` (`book_id` ASC) VISIBLE,
+    INDEX `user_id_idx` (`user_id` ASC) VISIBLE,
+    UNIQUE INDEX `rate_id_UNIQUE` (`rate_id` ASC) VISIBLE,
+    UNIQUE (`book_id`,`user_id`),
+    FOREIGN KEY (`book_id`)
+    REFERENCES `mewdb`.`book` (`book_id`)
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
     FOREIGN KEY (`user_id`)
     REFERENCES `mewdb`.`user` (`user_id`)
@@ -62,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `mewdb`.`word` (
     INDEX `book_idx` (`book_id` ASC),
     FOREIGN KEY (`book_id`)
     REFERENCES `mewdb`.`book` (`book_id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
     ENGINE = InnoDB;
 
