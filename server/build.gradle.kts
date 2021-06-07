@@ -25,8 +25,11 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity5")
+	implementation("io.jsonwebtoken:jjwt:0.9.1")
+	implementation("org.apache.commons:commons-lang3:3.4")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("mysql:mysql-connector-java:8.0.24")
+	runtimeOnly("jakarta.xml.bind:jakarta.xml.bind-api")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 }
