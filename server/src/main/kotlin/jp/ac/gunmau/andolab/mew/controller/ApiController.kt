@@ -158,17 +158,28 @@ class ApiController @Autowired constructor(
 
     @GetMapping("/book")
     fun getBook(@RequestParam(name="userid",required = true) userId:Int): ResponseEntity<List<Book>>{
-        return responseEntityUtil(bookService.selectByUserId(userId))
+        val currentUserId = getUserId(SecurityContextHolder.getContext().authentication)
+        if(currentUserId == userId){
+            return responseEntityUtil(bookService.selectByUserId(userId))
+        }
+        return responseEntityUtil(bookService.selectPublicByUserId(userId))
     }
 
     @GetMapping("/book/{id}")
     fun getBookById(@PathVariable("id") id:Int): ResponseEntity<Book>{
-        return responseEntityUtil(bookService.selectById(id))
+        val currentUserId = getUserId(SecurityContextHolder.getContext().authentication)
+        return responseEntityUtil(bookService.selectById(id)?.let {
+            when{
+                (it.public) -> it
+                (it.userId==currentUserId) -> it
+                else -> null
+            }
+        })
     }
 
     @GetMapping("/book/find")
     fun findBook(@RequestParam(name="title",required = true) title:String): ResponseEntity<List<Book>>{
-        return responseEntityUtil(bookService.findByTitle(patternUtil(title)))
+        return responseEntityUtil(bookService.findPublicByTitle(patternUtil(title)))
     }
 
     @GetMapping("/books")

@@ -6,5 +6,6 @@ data class Book(
     var bookId:Int?,
     var userId:Int?,
     var title:String,
+    var public:Boolean = false,
     var createdAt:LocalDateTime?,
     var updatedAt:LocalDateTime?)
