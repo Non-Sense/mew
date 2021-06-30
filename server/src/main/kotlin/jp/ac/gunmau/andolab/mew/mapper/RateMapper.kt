@@ -4,6 +4,7 @@ import jp.ac.gunmau.andolab.mew.model.Rate
 import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Select
+import org.apache.ibatis.annotations.Update
 
 @Mapper
 interface RateMapper {
@@ -24,4 +25,7 @@ interface RateMapper {
 
     @Select("SELECT * FROM rate LIMIT 300")
     fun selectAll(): List<Rate>
+
+    @Update("UPDATE rate=#{rate} WHERE rate_id = #{rateId}")
+    fun updateRate(id: Int, rate: Int): Boolean
 }

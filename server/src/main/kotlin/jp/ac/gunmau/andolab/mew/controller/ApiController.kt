@@ -2,6 +2,7 @@ package jp.ac.gunmau.andolab.mew.controller
 
 import jp.ac.gunmau.andolab.mew.model.*
 import jp.ac.gunmau.andolab.mew.service.*
+import org.apache.ibatis.annotations.Update
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.DuplicateKeyException
@@ -294,6 +295,29 @@ class ApiController @Autowired constructor(
     @GetMapping("/rates")
     fun getAllRate(): ResponseEntity<List<Rate>>{
         return ResponseEntity.ok(rateService.selectAll())
+    }
+
+
+    /**
+     * passwordは平文で送ってもらう
+     */
+    @Update("/user/{nameId}")
+    fun updateUser(@RequestBody user:User):ResponseEntity<String>{
+        val nameId = SecurityContextHolder.getContext().authentication.name
+
+        if(user.name!=null){
+            userService.updateDisplayName(nameId, user.name!!)
+        }
+        try {
+            if (!user.password.matches(bcryptRegex)) {
+                val encoder = BCryptPasswordEncoder()
+                user.password = encoder.encode(user.password)
+            }
+            userService.updatePassword(nameId, user.password)
+        }catch (e:NullPointerException){
+        }
+
+        return ResponseEntity(HttpStatus.OK)
     }
 
 }
