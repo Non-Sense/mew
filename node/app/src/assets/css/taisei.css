@@ -1,0 +1,280 @@
+.taisei_Mbody{
+  background-color: #FFFFFF;
+  margin: 0;
+}
+
+.taisei_top{
+  margin-top: 20vh;
+  margin-left: 10vw;
+}
+
+.taisei_top ul{
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+}
+
+.taisei_top ul li{
+  margin-right: 8vw;
+}
+
+.taisei_top p{
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 4vmin;
+
+
+  align-items: center;
+
+  color: #666666
+}
+
+.taisei_top input {
+  margin-top: 3vh;
+  width: 38vw;
+  height: 6.8vh;
+  
+  background-color: #F6F7FB;
+  border-radius: 16px;
+  border-style: none;
+  outline: none;
+}
+
+.taisei_top input::-webkit-input-placeholder{
+  color: #C4C4C4;
+  font-weight: bold;
+}
+
+.taisei_top input::-moz-placeholder{
+  color: #C4C4C4;
+  font-weight: bold;
+}
+
+.taisei_top input::-moz-placeholder{
+  color: #C4C4C4;
+  font-weight: bold;
+}
+
+.taisei_top input::-ms-input-placeholder{
+  color: #C4C4C4;
+  font-weight: bold;
+}
+
+.taisei_top button {
+  margin-top: 1vh;
+  width: 14.8vw;
+  height: 10.5vh;
+  
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 2vw;
+
+  color: #FFFFFF;
+  background-color: #7B89C9;
+  border-radius: 8px;
+  border-style: none;
+  opacity: 0.8;
+}
+
+.taisei_top button:hover{
+  opacity: 1.0;
+}
+
+.taisei_title{
+  margin-top: 5vh;
+  margin-left: 10vw;
+}
+
+.taisei_title ul{
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.taisei_title ul li{
+  margin-right: 11vw;
+  margin-bottom: 7vh;
+}
+
+.taisei_title input{
+  text-align: left;
+
+  width: 34.5vw;
+  height: 8.0vh;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.4vw;
+  
+  border-style: none;
+  color: #666666;
+  background: #F6F7FB;
+}
+
+.taisei_title button{
+  margin-left: -5vw;
+  align-items: center;
+  font-size: 1.4vw;
+  color: #c6c6c6;
+  background-color: #F6F7FB;
+  border-style: none;
+  padding: 0;
+}
+
+
+
+.taisei_share{
+  margin-top: 5vh;
+  margin-left: 10vw;
+}
+
+.taisei_share p{
+  font-family: Noto Sans JP;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.7vw;
+
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.1em;
+
+  color: #666666;
+}
+
+.taisei_share input{
+  width: 34.5vw;
+  height: 8.0vh;
+  text-align: left;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.4vw;
+
+  border-style: none;
+  color: #666666;
+  background: #F6F7FB;
+}
+
+/* Online */
+
+.taisei_Obody{
+  background-color: #FFFFFF;
+  margin: 0;
+}
+
+.taisei_list{
+  margin-top: 20vh;
+  margin-left: 10vw;
+}
+
+.taisei_list ul{
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+}
+
+.taisei_list p{
+  margin-top: 1vh;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 2.5vw;
+  display: flex;
+  align-items: center;
+
+  color: #666666;
+}
+
+.taisei_list input{
+  margin-left: 25vw;
+  width: 41.7vw;
+  height: 8.0vh;
+
+  background: #F6F7FB;
+  border-radius: 16px;
+  border-style: none;
+  outline: none;
+}
+
+.taisei_list input::-webkit-input-placeholder{
+  color: #c4c4c4;
+  font-weight: bold;
+}
+
+.taisei_list input:-moz-placeholder{
+  color: #c4c4c4;
+  font-weight: bold;
+}
+
+.taisei_list input::-moz-placeholder{
+  color: #c4c4c4;
+  font-weight: bold;
+}
+
+.taisei_list input:-ms-input-placeholder{
+  color: #c4c4c4;
+  font-weight: bold;
+}
+
+.taisei_WB{
+  margin-top: 5vh;
+  margin-left: 10vw;
+}
+
+.taisei_WB ul{
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.taisei_WB ul li{
+  margin-right: 11.5vw;
+  margin-bottom: 7vh;
+}
+
+.taisei_WB p{
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.2vw;
+
+  display: flex;
+  align-items: center;
+
+  color: #666666;
+}
+
+.taisei_WB input{
+  text-align: left;
+  width: 34.5vw;
+  height: 8.0vh;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.4vw;
+
+  border-style: none;
+  color: #666666;
+  background: #F6F7FB;
+}
+
+.taisei_WB button{
+  margin-left: -6.5vw;
+  align-items: center;
+  font-size: 1.2vw;
+  color: #c6c6c6;
+  background-color: #F6F7FB;
+  border-style: none;
+  padding: 0;
+}
