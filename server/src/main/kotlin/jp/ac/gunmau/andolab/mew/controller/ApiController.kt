@@ -156,10 +156,10 @@ class ApiController @Autowired constructor(
     }
 
     @GetMapping("/book")
-    fun getBook(@RequestParam(name="userid",required = true) userId:Int): ResponseEntity<List<Book>>{
+    fun getBook(@RequestParam(name="userid",required = false) userId:Int?): ResponseEntity<List<Book>>{
         val currentUserId = getUserId(SecurityContextHolder.getContext().authentication)
-        if(currentUserId == userId){
-            return responseEntityUtil(bookService.selectByUserId(userId))
+        if(userId==null || currentUserId == userId){
+            return responseEntityUtil(bookService.selectByUserId(currentUserId))
         }
         return responseEntityUtil(bookService.selectPublicByUserId(userId))
     }
@@ -208,6 +208,11 @@ class ApiController @Autowired constructor(
     fun getWord(@RequestParam(name="bookid", required = true) bookId:Int): ResponseEntity<List<Word>>{
         return responseEntityUtil(wordService.selectByBookId(bookId))
     }
+    @GetMapping("/book/{id}/word")
+    fun getBookWord(@PathVariable(name="id") bookId: Int): ResponseEntity<List<Word>>{
+        return responseEntityUtil(wordService.selectByBookId(bookId))
+    }
+
 
     @GetMapping("/word/find")
     fun findWord(@RequestParam(name="word",required = false) word: String?,
@@ -247,6 +252,10 @@ class ApiController @Autowired constructor(
         if(bookId!=null)
             return responseEntityUtil(commentService.selectByBookId(bookId))
         return responseEntityUtil(commentService.selectByUserId(userId!!))
+    }
+    @GetMapping("/book/{id}/comment")
+    fun getBookComment(@PathVariable(name="id") bookId: Int): ResponseEntity<List<Comment>>{
+        return responseEntityUtil(commentService.selectByBookId(bookId))
     }
 
     @GetMapping("/comments")
