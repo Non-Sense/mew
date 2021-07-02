@@ -11,6 +11,11 @@ import MyPageIndexNewPost from '@/mypage/index/new_post.vue'
 //Online
 import Online from '@/online/index.vue'
 
+//TestPages
+import SignupTest from '@/test/signup_test.vue'
+import LoginTest from '@/test/login_test.vue'
+import BookTest from '@/test/book_test.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -51,6 +56,19 @@ export default new Router({
     {
       path: '/online',
       component: Online
+    },
+
+    {
+      path: '/test/signup',
+      component: SignupTest
+    },
+    {
+      path: '/test/login',
+      component: LoginTest
+    },
+    {
+      path: '/test/book',
+      component: BookTest
     },
   ]
 })
