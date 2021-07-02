@@ -7,6 +7,7 @@ import jp.ac.gunmau.andolab.mew.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
@@ -27,7 +28,7 @@ class SecurityConfig @Autowired constructor(private val provider: JwtProvider, p
 
     override fun configure(http: HttpSecurity) {
         http
-            .cors().and()
+            .cors(Customizer.withDefaults())
             .authorizeRequests()
             .antMatchers("/api","/api/signup","/api/login").permitAll()
             .anyRequest().authenticated()
