@@ -27,8 +27,7 @@ class ApiController @Autowired constructor(
     }
 
     private fun getUserId(auth: Authentication): Int{
-        val userName = auth.name
-        return userService.select(userName)!!.userId!!
+        return (auth.principal as User).userId!!
     }
 
     @RequestMapping

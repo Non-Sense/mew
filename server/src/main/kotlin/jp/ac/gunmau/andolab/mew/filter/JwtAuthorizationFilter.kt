@@ -1,6 +1,7 @@
 package jp.ac.gunmau.andolab.mew.filter
 
 import jp.ac.gunmau.andolab.mew.JwtProvider
+import jp.ac.gunmau.andolab.mew.model.User
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -27,6 +28,11 @@ class JwtAuthorizationFilter constructor(private val provider: JwtProvider, auth
 
         val authentication = getAuthentication(req)
         SecurityContextHolder.getContext().authentication = authentication
+        // 本当はリフレッシュトークンとかでやるべきだけど面倒くさいので
+        // リクエスト毎にアクセストークンだけで新しいトークンを投げる
+        if(authentication!=null){
+            res.setHeader(JwtProvider.HEADER_STRING, provider.createToken(authentication.principal as User))
+        }
         chain.doFilter(req, res)
     }
 
