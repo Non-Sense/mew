@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `mewdb`.`book` (
     `book_id` INT NOT NULL AUTO_INCREMENT,
     `user_id` INT NOT NULL,
     `title` VARCHAR(155) NOT NULL,
+    `public` BOOLEAN NOT NULL DEFAULT false,
     `created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp,
     `updated_at` TIMESTAMP NOT NULL DEFAULT current_timestamp on update current_timestamp,
     PRIMARY KEY (`book_id`),

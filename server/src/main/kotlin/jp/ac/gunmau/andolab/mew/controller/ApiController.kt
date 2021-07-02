@@ -7,8 +7,11 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
+import java.util.logging.Logger
 
 @RestController
 @RequestMapping("/api")
@@ -21,6 +24,11 @@ class ApiController @Autowired constructor(
 
     companion object{
         private val bcryptRegex = Regex("""^\$2[ayb]\$.{56}$""")
+    }
+
+    private fun getUserId(auth: Authentication): Int{
+        val userName = auth.name
+        return userService.select(userName)!!.userId!!
     }
 
     @RequestMapping
@@ -137,6 +145,7 @@ class ApiController @Autowired constructor(
 
     @PostMapping("/book")
     fun postBook(@RequestBody book:Book): ResponseEntity<String>{
+        book.userId = getUserId(SecurityContextHolder.getContext().authentication)
         try {
             bookService.insert(book)
         } catch (e: DuplicateKeyException){
@@ -149,17 +158,28 @@ class ApiController @Autowired constructor(
 
     @GetMapping("/book")
     fun getBook(@RequestParam(name="userid",required = true) userId:Int): ResponseEntity<List<Book>>{
-        return responseEntityUtil(bookService.selectByUserId(userId))
+        val currentUserId = getUserId(SecurityContextHolder.getContext().authentication)
+        if(currentUserId == userId){
+            return responseEntityUtil(bookService.selectByUserId(userId))
+        }
+        return responseEntityUtil(bookService.selectPublicByUserId(userId))
     }
 
     @GetMapping("/book/{id}")
     fun getBookById(@PathVariable("id") id:Int): ResponseEntity<Book>{
-        return responseEntityUtil(bookService.selectById(id))
+        val currentUserId = getUserId(SecurityContextHolder.getContext().authentication)
+        return responseEntityUtil(bookService.selectById(id)?.let {
+            when{
+                (it.public) -> it
+                (it.userId==currentUserId) -> it
+                else -> null
+            }
+        })
     }
 
     @GetMapping("/book/find")
     fun findBook(@RequestParam(name="title",required = true) title:String): ResponseEntity<List<Book>>{
-        return responseEntityUtil(bookService.findByTitle(patternUtil(title)))
+        return responseEntityUtil(bookService.findPublicByTitle(patternUtil(title)))
     }
 
     @GetMapping("/books")
@@ -207,6 +227,7 @@ class ApiController @Autowired constructor(
 
     @PostMapping("/comment")
     fun postComment(@RequestBody comment: Comment): ResponseEntity<String>{
+        comment.userId = getUserId(SecurityContextHolder.getContext().authentication)
         try {
             commentService.insert(comment)
         } catch (e: DataIntegrityViolationException){
@@ -237,6 +258,7 @@ class ApiController @Autowired constructor(
 
     @PostMapping("/rate")
     fun postRate(@RequestBody rate: Rate):ResponseEntity<String>{
+        rate.userId = getUserId(SecurityContextHolder.getContext().authentication)
         try{
             rateService.insert(rate)
         } catch (e: DataIntegrityViolationException){
