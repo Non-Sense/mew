@@ -28,8 +28,9 @@ export default {
  * ここでimportしているscssは
  * 全てのページに適用されます
  */
+@import './assets/css/common.css';
 @import './assets/css/hashimoto.css';
 @import './assets/css/taisei.css';
-@import './assets/css/common.css';
+@import './assets/css/tomita.css';
 
 </style>

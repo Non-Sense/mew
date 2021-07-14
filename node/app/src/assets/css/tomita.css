@@ -1,0 +1,198 @@
+/* online_index */
+.tomita_oiheader p{
+    margin: 0px;
+    background-color:  #7B89C9;
+    padding-bottom: 35px;
+    padding-top: 35px;
+    padding-left: 20px;
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 20px;
+    color: white;
+}
+
+.tomita_oitop{
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 24px;
+    color: #666666;
+    width : 1000px;
+    margin-left: 230px;
+    margin-right: 230px;
+    margin-bottom: 112px;
+    margin-top: 127px;
+}
+
+.tomita_oisearch{
+    font-family: Roboto;
+    font-style: normal;
+    background-color: #F6F7FB;
+    border: none;
+    width: 480px;
+    height: 48px;
+    margin-left: 109px;
+    padding-right: 408px;
+    padding-left: 16px;
+    padding-top: 14px;
+    padding-bottom: 13px;
+    border-radius: 16px;
+}
+
+.tomita_oiReview{
+    font-family: Roboto;
+    font-style: normal;
+    background-color: #7B89C9;
+    color:white;
+    border: none;
+    font-size: 24px;
+    width: 188px;
+    height: 64px;
+    margin-left: 72px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 53px;
+    padding-right: 53px;
+    border-radius: 5px;
+    position: absolute;
+    top: 210px;
+}
+
+
+
+.tomita_oiword_list table{
+    font-family: Roboto;
+    font-style: normal;
+    background-color: #F6F7FB;
+    font-size: 18px;
+    width: 980px;
+    height: 48px;
+    margin-left: 230px;
+    margin-right: 230px;
+    margin-bottom: 49px;
+    border-radius: 2px;
+}
+
+.tomita_oiword{
+    width: 243px;
+    padding-left: 20px;
+    padding-top: 14px;
+    padding-bottom: 13px;
+}
+
+.tomita_oimeaning{
+    padding-top: 14px;
+    padding-bottom: 13px;
+}
+
+/* mypega_index */
+
+.tomita_mibody{
+    margin: 0px;
+}
+
+.tomita_miheader p{
+    margin: 0px;
+    background-color: #7B89C9;
+    padding-bottom: 35px;
+    padding-top: 35px;
+    padding-left: 20px;
+    font-family: Roboto;
+    font-style: normal;
+    font-size: 20px;
+    color: white;
+}
+
+.tomita_mitop{
+    font-family: Roboto;
+    font-style: normal;
+    color: #666666;
+    font-size: 24px;
+    width : 1000px;
+    margin-left: 230px;
+    margin-right: 230px;
+    margin-bottom: 112px;
+    margin-top: 127px;
+}
+
+
+
+.tomita_misearch{
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    background-color: #F6F7FB;
+    border: none;
+    width: 480px;
+    height: 48px;
+    margin-left: 109px;
+    padding-right: 408px;
+    padding-left: 16px;
+    padding-top: 14px;
+    padding-bottom: 13px;
+    border-radius: 16px;
+}
+
+.tomita_new_post{
+    font-family: Roboto;
+    font-style: normal;
+    background-color: #7B89C9;
+    color:white;
+    border: none;
+    font-size: 24px;
+    width: 188px;
+    height: 64px;
+    margin-left: 72px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 41px;
+    padding-right: 41px;
+    border-radius: 5px;
+    position: absolute;
+    top: 210px;
+}
+
+.tomita_miword_list table{
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    background-color: #F6F7FB;
+    font-size: 18px;
+    width: 980px;
+    height: 48px;
+    margin-left: 230px;
+    margin-right: 230px;
+    margin-bottom: 49px;
+    border-radius: 2px;
+}
+
+.tomita_miword{
+    width: 243px;
+    padding-left: 20px;
+    padding-top: 14px;
+    padding-bottom: 13px;
+}
+
+.tomita_mimeaning{
+    padding-top: 14px;
+    padding-bottom: 13px;
+    width: 36px;
+    height: 21px;
+}
+
+.tomita_edit{
+    text-align: right;
+  
+}
+
+.tomita_edit_button{
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    background-color: #F6F7FB;
+    border: none;
+    color:#C6C6C6;
+    margin-right: 30px;
+    
+    padding-left: none;
+}

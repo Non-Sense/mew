@@ -2,7 +2,7 @@
 
   <div>
     <h2>MEW</h2>
-    <form id="form" @submit="login" action="#">
+    <form id="form" @submit="login" action="#" class="login_form">
       <label for="login_id">ログインID</label>
       <input v-model="loginId" type="text" id="login_id" required class="login_mail">
       <br>
@@ -13,7 +13,7 @@
 
       <button type="submit" value="submit" class="login login_button">ログイン</button>
     </form>
-    <a href="../signup"><button class="login login_button">新規登録</button></a>
+    <a href=" ../test/signup" class="login_a"><button class="login login_button longin_a">新規登録</button></a>
     
   <span v-cloak>{{ msg }}</span>
   </div>
@@ -52,28 +52,28 @@ export default {
 </script>
 
 <style>
-
-body {
-  /* color: rgb(144, 143, 228); */
-  font-family: sans-serif;
-}
-
 h2 {
+  color: rgb(144, 143, 228);
   text-align: center;
-  font-weight: lighter;
+  font-weight: bold;
   font-size: 30px;
   margin: 0 auto;
   display: block;
-  margin-top: 150px;
-  margin-bottom: 90px;
+  margin-top: 64px;
+  margin-bottom: 64px;
 }
 
-form {
+.login_form {
   color: gray;  
   width: 600px;
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 40px;
+}
+
+.login_a {
+  background-color: #b4b3b3!important;
+  text-decoration: none;
 }
 
 .login_mail {

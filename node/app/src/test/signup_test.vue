@@ -1,24 +1,24 @@
 <template>
+  <div class="container">
+        <h2>MEW</h2>
 
-  <div>
-    <div class="container">
-      <form id="form" @submit="signup" action="#">
-        <label for="login_id">ログインID 英数字5-15文字</label>
-        <input v-model="loginId" type="text" id="login_id" required minlength="5" maxlength="15" pattern="^\w{5,15}$">
-        <br>
+    <form id="form" @submit="signup" action="#" class="login_form">
+      <label for="login_id">ログインID 英数字5-15文字</label>
+      <input v-model="loginId" type="text" id="login_id" class="login_mail" required minlength="5" maxlength="15" pattern="^\w{5,15}$">
+      <br>
 
-        <label for="display_name">表示名 1-50文字</label>
-        <input v-model="displayName" type="text" id="display_name" required minlength="1" maxlength="50" pattern="^[0-9a-zA-Zぁ-んァ-ヶ一-龠々ー]{1,50}$">
-        <br>
+      <label for="display_name">表示名 1-50文字</label>
+      <input v-model="displayName" type="text" id="display_name" class="login_mail" required minlength="1" maxlength="50" pattern="^[0-9a-zA-Zぁ-んァ-ヶ一-龠々ー]{1,50}$">
+      <br>
 
-        <label for="password">パスワード 最低6文字</label>
-        <input v-model="password" type="password" id="password" required minlength="6" pattern="^.{6,}">
-        <br>
+      <label for="password">パスワード 最低6文字</label>
+      <input v-model="password" type="password" id="password" class="login_mail" required minlength="6" pattern="^.{6,}">
+      <br>
 
-        <input type="submit" value="submit">
-      </form>
-      <span v-cloak>{{ msg }}</span>
-    </div>
+      <button type="submit" value="submit" class="login login_button">新規登録</button>
+    </form>
+    <a href="../test/login"><button class="login login_button">ログイン</button></a>
+    <span v-cloak>{{ msg }}</span>
   </div>
 </template>
 

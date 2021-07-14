@@ -8,8 +8,11 @@ import MyPageEdit from '@/mypage/edit.vue'
 import MyPageNewPost from '@/mypage/new_post.vue'
 import MyPageIndexEdit from '@/mypage/index/edit.vue'
 import MyPageIndexNewPost from '@/mypage/index/new_post.vue'
+import MyPageIndex from '@/mypage/index/index.vue'
+
 //Online
 import Online from '@/online/index.vue'
+import OnlineIndex from '@/online/index/index.vue'
 
 //TestPages
 import SignupTest from '@/test/signup_test.vue'
@@ -46,6 +49,10 @@ export default new Router({
       component: MyPageNewPost
     },
     {
+      path: '/mypage/index',
+      component: MyPageIndex
+    },
+    {
       path: '/mypage/index/edit',
       component: MyPageIndexEdit
     },
@@ -56,6 +63,9 @@ export default new Router({
     {
       path: '/online',
       component: Online
+    },    {
+      path: '/online/index',
+      component: OnlineIndex
     },
 
     {
