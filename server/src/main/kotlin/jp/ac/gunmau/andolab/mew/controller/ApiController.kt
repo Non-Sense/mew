@@ -186,6 +186,11 @@ class ApiController @Autowired constructor(
         return ResponseEntity.ok(bookService.selectAll())
     }
 
+    @GetMapping("/book/public")
+    fun getPublicBooks():ResponseEntity<List<BookWithRate>>{
+        return responseEntityUtil(bookService.selectBooksWithRate())
+    }
+
 
     @PostMapping("/word")
     fun postWord(@RequestBody word:Word):ResponseEntity<String>{

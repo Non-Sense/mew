@@ -89,3 +89,7 @@ CREATE TABLE IF NOT EXISTS `mewdb`.`word` (
 CREATE USER IF NOT EXISTS 'user' IDENTIFIED BY 'password';
 
 GRANT SELECT, INSERT, TRIGGER, UPDATE, DELETE ON TABLE `mewdb`.* TO 'user';
+
+USE `mewdb`;
+CREATE VIEW `mewdb`.`book_rate` (book_id, rate) AS SELECT `mewdb`.`rate`.`book_id`, avg(`mewdb`.`rate`.`rate`) FROM `mewdb`.`rate` GROUP BY `mewdb`.`rate`.`book_id`;
+

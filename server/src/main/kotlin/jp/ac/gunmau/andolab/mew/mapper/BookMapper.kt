@@ -1,6 +1,7 @@
 package jp.ac.gunmau.andolab.mew.mapper
 
 import jp.ac.gunmau.andolab.mew.model.Book
+import jp.ac.gunmau.andolab.mew.model.BookWithRate
 import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Select
@@ -24,6 +25,9 @@ interface BookMapper {
 
     @Select("SELECT * FROM book WHERE title LIKE #{pattern} AND public = true LIMIT 300")
     fun findPublicByTitle(pattern: String): List<Book>
+
+    @Select("SELECT book.book_id, user_id, title, public, created_at, updated_at, rate FROM book INNER JOIN book_rate ON book.book_id = book_rate.book_id WHERE book.public = true ORDER BY book_rate.rate DESC LIMIT 300")
+    fun selectBooksWithRate(): List<BookWithRate>
 
     @Select("SELECT * FROM book LIMIT 300")
     fun selectAll(): List<Book>

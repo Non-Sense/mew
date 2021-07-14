@@ -2,6 +2,7 @@ package jp.ac.gunmau.andolab.mew.service
 
 import jp.ac.gunmau.andolab.mew.mapper.BookMapper
 import jp.ac.gunmau.andolab.mew.model.Book
+import jp.ac.gunmau.andolab.mew.model.BookWithRate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -23,6 +24,10 @@ class BookService @Autowired constructor(private val dao: BookMapper) {
 
     fun selectPublicByUserId(userId: Int):List<Book>{
         return dao.selectPublicWithUserId(userId)
+    }
+
+    fun selectBooksWithRate():List<BookWithRate>{
+        return dao.selectBooksWithRate()
     }
 
     fun findByTitle(pattern: String):List<Book>{
