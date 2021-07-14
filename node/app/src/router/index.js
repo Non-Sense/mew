@@ -41,31 +41,43 @@ export default new Router({
       component: MyPage
     },
     {
-      path: '/mypage/edit',
-      component: MyPageEdit
+      path: '/mypage/edit?id=:id',
+      component: MyPageEdit,
+      props: true,
+      name: "mypage-edit"
     },
     {
-      path: '/mypage/new_post',
-      component: MyPageNewPost
+      path: '/mypage/new_post?id=:id',
+      component: MyPageNewPost,
+      props: true,
+      name: "mypage-new_post"
     },
     {
-      path: '/mypage/index',
-      component: MyPageIndex
+      path: '/mypage/index?id=:id',
+      component: MyPageIndex,
+      props: true,
+      name: "mypage-index"
     },
     {
-      path: '/mypage/index/edit',
-      component: MyPageIndexEdit
+      path: '/mypage/index/edit?id=:id',
+      component: MyPageIndexEdit,
+      props: true,
+      name: "mypage-index-edit"
     },
     {
-      path: '/mypage/index/new_post',
-      component: MyPageIndexNewPost
+      path: '/mypage/index/new_post?id=:id',
+      component: MyPageIndexNewPost,
+      props: true,
+      name: "mypage-index-new_post"
     },
     {
       path: '/online',
       component: Online
     },    {
-      path: '/online/index',
-      component: OnlineIndex
+      path: '/online/index?id=:id',
+      component: OnlineIndex,
+      props: true,
+      name: "online-index"
     },
 
     {

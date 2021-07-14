@@ -32,6 +32,7 @@
           <td>{{item.public}}</td>
           <td>{{item.createdAt}}</td>
           <td>{{item.updatedAt}}</td>
+          <router-link :to="{name: 'mypage-edit',params: { id: clickEdit(item.bookId) }}">edit</router-link>
         </tr>
       </table>
     </div>
@@ -50,7 +51,8 @@ export default {
       isPublic: false,
       msg: "",
       showFlag: false,
-      items:[{bookId:"",userId:"",title:"",public:"",createdAt:"",updatedAt:""}]
+      items:[{bookId:"",userId:"",title:"",public:"",createdAt:"",updatedAt:""}],
+      editId: 0,
     }
   },
 
@@ -94,7 +96,11 @@ export default {
           this.$router.push("/test/login");
         }
       })
-    }
+    },
+    // editボタン押した時のパラメータを渡す
+    clickEdit(id){
+      return this.editId = id;
+    },
   }
 }
 </script>
