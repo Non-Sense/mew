@@ -1,18 +1,21 @@
 <template>
 
   <div>
+    <h2>MEW</h2>
     <form id="form" @submit="login" action="#">
       <label for="login_id">ログインID</label>
-      <input v-model="loginId" type="text" id="login_id" required>
+      <input v-model="loginId" type="text" id="login_id" required class="login_mail">
       <br>
 
       <label for="password">パスワード</label>
-      <input v-model="password" type="password" id="password" required>
+      <input v-model="password" type="password" id="password" required class="login_password">
       <br>
 
-      <input type="submit" value="submit">
+      <button type="submit" value="submit" class="login login_button">ログイン</button>
     </form>
-   <span v-cloak>{{ msg }}</span>
+    <a href="../signup"><button class="login login_button">新規登録</button></a>
+    
+  <span v-cloak>{{ msg }}</span>
   </div>
 </template>
 
@@ -47,3 +50,83 @@ export default {
   }
 }
 </script>
+
+<style>
+
+body {
+  /* color: rgb(144, 143, 228); */
+  font-family: sans-serif;
+}
+
+h2 {
+  text-align: center;
+  font-weight: lighter;
+  font-size: 30px;
+  margin: 0 auto;
+  display: block;
+  margin-top: 150px;
+  margin-bottom: 90px;
+}
+
+form {
+  color: gray;  
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 40px;
+}
+
+.login_mail {
+  height: 40px;
+  width: 600px;
+  background-color: rgb(245, 243, 243);
+  border-color:aliceblue;
+  border-style: none;
+  margin-bottom: 30px;
+}
+
+.login_password {
+  height: 40px;
+  width: 600px;
+  background-color: rgb(245, 243, 243);
+  border-color:aliceblue;
+  border-style: none;
+}
+
+.login_button {
+  width: 300px;
+  margin-top: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  color: #fff;
+  font-size: 6px;
+  border-style: none;
+  height: 40px;
+  border-radius: 5px;
+
+}
+
+.login_button ul {
+  list-style-type: none;
+  padding: 0px;
+}
+
+.login_button ul li button {
+  width: 300px;
+  margin-top: 20px;
+  color: white;
+  font-size: 6px;
+  border-style: none;
+  height: 40px;
+  border-radius: 5px;
+}
+
+.login {
+  background-color:rgb(144, 143, 228);
+}
+
+.regi {
+  background-color: rgb(180, 179, 179);
+}
+</style>
