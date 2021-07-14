@@ -21,8 +21,16 @@ class BookService @Autowired constructor(private val dao: BookMapper) {
         return dao.selectWithUserId(userId)
     }
 
+    fun selectPublicByUserId(userId: Int):List<Book>{
+        return dao.selectPublicWithUserId(userId)
+    }
+
     fun findByTitle(pattern: String):List<Book>{
         return dao.findByTitle(pattern)
+    }
+
+    fun findPublicByTitle(pattern: String):List<Book>{
+        return dao.findPublicByTitle(pattern)
     }
 
     fun selectAll():List<Book>{

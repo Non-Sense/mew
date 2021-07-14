@@ -16,7 +16,7 @@ class JwtProvider @Autowired constructor(private val service: UserService){
 
     companion object{
         private const val secretKey = "oPSIXNPOWXcZxfQmGDfx6FKJwjkdUPOnH6e655k1VX7K8pBKUVZCi7lF0CXar4oM"
-        private const val validDuration = 1000L*60L*60L*5L
+        private const val validDuration = 1000L*60L*60L*2L
         const val HEADER_STRING = "X-AUTH-TOKEN"
     }
 
