@@ -2,7 +2,6 @@
   <div class="hashimoto-main">     
     <form action="送信先のURL" method="post">
       <div class="hashimoto-button">
-        <input class="hashimoto-delete" type="submit" value="Delete">
         <input class="hashimoto-save" type="submit" value="Save">
       </div>
       <div class="hashimoto-page-name">New Post</div>
