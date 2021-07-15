@@ -12,7 +12,10 @@ interface RateMapper {
     fun insert(model: Rate): Int
 
     @Select("SELECT * FROM rate WHERE rate_id = #{rateId}")
-    fun selectWithRateId(rateId: Int): Rate
+    fun selectWithRateId(rateId: Int): Rate?
+
+    @Select("SELECT * FROM rate WHERE book_id = #{bookId} AND user_id = #{userId}")
+    fun selectWithBookIdAndUserId(bookId: Int, userId: Int): Rate?
 
     @Select("SELECT * FROM rate WHERE book_id = #{bookId}")
     fun selectWithBookId(bookId: Int): List<Rate>

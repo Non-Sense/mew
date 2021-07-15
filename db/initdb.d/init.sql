@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS `mewdb`.`word` (
     `book_id` INT NOT NULL,
     `word` VARCHAR(155) NOT NULL,
     `mean` VARCHAR(155) NOT NULL,
+    `user_id` INT NOT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT current_timestamp,
     `updated_at` TIMESTAMP NOT NULL DEFAULT current_timestamp on update current_timestamp,
     PRIMARY KEY (`word_id`),
