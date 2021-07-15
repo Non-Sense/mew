@@ -27,7 +27,7 @@ interface BookMapper {
     @Select("SELECT * FROM book WHERE title LIKE #{pattern} AND public = true LIMIT 300")
     fun findPublicByTitle(pattern: String): List<Book>
 
-    @Select("SELECT book.book_id, user_id, title, public, created_at, updated_at, rate FROM book INNER JOIN book_rate ON book.book_id = book_rate.book_id WHERE book.public = true ORDER BY book_rate.rate DESC LIMIT 300")
+    @Select("SELECT book.book_id, user_id, title, public, rate, created_at, updated_at FROM book INNER JOIN book_rate ON book.book_id = book_rate.book_id WHERE book.public = true ORDER BY book_rate.rate DESC LIMIT 300")
     fun selectBooksWithRate(): List<BookWithRate>
 
     @Select("SELECT * FROM book LIMIT 300")
