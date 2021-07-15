@@ -6,7 +6,7 @@
           <p>MyPage List</p>
         </li>
         <li>
-          <input type="text" placeholder="    Search"/>
+          <input v-model="search" type="text" placeholder="    Search"/>
         </li>
         <li>
           <button>New Post</button>

@@ -6,7 +6,7 @@
           <p>Online List</p>
         </li>
         <li>
-          <input type="text" placeholder="    Search" />
+          <input v-model="search" type="text" placeholder="    Search" />
         </li>
       </ul>
     </div>
