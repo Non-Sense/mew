@@ -30,6 +30,10 @@ class BookService @Autowired constructor(private val dao: BookMapper) {
         return dao.selectBooksWithRate()
     }
 
+    fun findBooksWithRate(pattern: String):List<BookWithRate>{
+        return dao.findBooksWithRate(pattern)
+    }
+
     fun findByTitle(pattern: String, userId: Int):List<Book>{
         return dao.findByTitle(pattern, userId)
     }

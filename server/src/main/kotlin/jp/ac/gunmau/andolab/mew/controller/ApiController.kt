@@ -229,8 +229,10 @@ class ApiController @Autowired constructor(
     }
 
     @GetMapping("/book/public")
-    fun getPublicBooks():ResponseEntity<List<BookWithRate>>{
-        return responseEntityUtil(bookService.selectBooksWithRate())
+    fun getPublicBooks(@RequestParam(name="title",required = false)title:String?):ResponseEntity<List<BookWithRate>>{
+        if(title==null)
+            return responseEntityUtil(bookService.selectBooksWithRate())
+        return responseEntityUtil(bookService.findBooksWithRate(patternUtil(title)))
     }
 
 
@@ -388,7 +390,25 @@ class ApiController @Autowired constructor(
     }
     @GetMapping("/book/{id}/comment")
     fun getBookComment(@PathVariable(name="id") bookId: Int): ResponseEntity<List<Comment>>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.public!=true || b.userId!=userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
         return responseEntityUtil(commentService.selectByBookId(bookId))
+    }
+
+    @PostMapping("/book/{id}/comment")
+    fun postComment(@PathVariable(name="id") bookId: Int,
+                    @RequestBody comment: Comment):ResponseEntity<String>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.public!=true || b.userId!=userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        comment.bookId = bookId
+        comment.userId = userId
+        if(commentService.insert(comment))
+            return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
     }
 
     @GetMapping("/comments")
@@ -400,7 +420,11 @@ class ApiController @Autowired constructor(
     @PostMapping("/rate")
     fun postRate(@RequestBody rate: Rate):ResponseEntity<String>{
         rate.bookId?:return ResponseEntity(HttpStatus.BAD_REQUEST)
-        rate.userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val b = bookService.selectById(rate.bookId!!)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.public!=true||b.userId!=userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        rate.userId = userId
         try{
             rateService.insert(rate)
         } catch (e: DataIntegrityViolationException){
@@ -436,6 +460,22 @@ class ApiController @Autowired constructor(
     @GetMapping("/rates")
     fun getAllRate(): ResponseEntity<List<Rate>>{
         return ResponseEntity.ok(rateService.selectAll())
+    }
+
+    @PostMapping("/book/{id}/rate")
+    fun postRate(@PathVariable(name = "id") bookId: Int,
+                   @RequestBody rate: Rate): ResponseEntity<String>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        rate.bookId = bookId
+        rate.userId = userId
+        try{
+            rateService.insert(rate)
+        } catch (e: DuplicateKeyException){
+            return ResponseEntity(null, HttpStatus.CONFLICT)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
     }
 
     @PutMapping("/book/{id}/rate")

@@ -103,7 +103,7 @@ export default {
         console.error("getParam: id == null");
         return;
       }
-      axios.get(config.baseUrl+"/api/book/"+bookId+"/find", {
+      axios.get(config.baseUrl+"/api/book/"+bookId+"/word/find", {
         params:{
           mean: searchMean===""?null:searchMean,
           word: searchWord===""?null:searchWord
