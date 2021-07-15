@@ -26,6 +26,6 @@ interface RateMapper {
     @Select("SELECT * FROM rate LIMIT 300")
     fun selectAll(): List<Rate>
 
-    @Update("UPDATE rate=#{rate} WHERE rate_id = #{rateId}")
+    @Update("UPDATE rate SET rate=#{rate} WHERE rate_id = #{rateId}")
     fun updateRate(id: Int, rate: Int): Boolean
 }

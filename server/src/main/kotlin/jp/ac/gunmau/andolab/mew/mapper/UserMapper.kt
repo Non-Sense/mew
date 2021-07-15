@@ -23,16 +23,16 @@ interface UserMapper {
     @Select("SELECT * FROM user LIMIT 300")
     fun selectAll(): List<User>
 
-    @Update("UPDATE name = #{name} WHERE user_id = #{id}")
+    @Update("UPDATE user SET name = #{name} WHERE user_id = #{id}")
     fun updateNameWithId(id: Int, name:String):Boolean
 
-    @Update("UPDATE password = #{password} WHERE user_id = #{id}")
+    @Update("UPDATE user SET password = #{password} WHERE user_id = #{id}")
     fun updatePasswordWithId(id:Int, password:String):Boolean
 
-    @Update("UPDATE name = #{name} WHERE name_id = #{nameId}")
+    @Update("UPDATE user SET name = #{name} WHERE name_id = #{nameId}")
     fun updateName(nameId: String, name:String):Boolean
 
-    @Update("UPDATE password = #{password} WHERE name_id = #{nameId}")
+    @Update("UPDATE user SET password = #{password} WHERE name_id = #{nameId}")
     fun updatePassword(nameId:String, password:String):Boolean
 
 }

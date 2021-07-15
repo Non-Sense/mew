@@ -26,9 +26,12 @@ interface WordMapper {
     @Select("SELECT * FROM word LIMIT 300")
     fun selectAll(): List<Word>
 
-    @Update("UPDATE word = #{word} WHERE word_id = #{id}")
+    @Update("UPDATE word SET word = #{word} WHERE word_id = #{id}")
     fun updateWord(id:Int, word: String):Boolean
 
-    @Update("UPDATE mean = #{mean} WHERE word_id = #{id}")
+    @Update("UPDATE word SET mean = #{mean} WHERE word_id = #{id}")
     fun updateMean(id:Int, mean:String):Boolean
+
+    @Update("UPDATE word SET word = #{word}, mean = #{mean} WHERE word_id = #{id}")
+    fun update(id:Int, word: String, mean:String):Boolean
 }
