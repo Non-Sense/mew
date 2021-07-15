@@ -7,8 +7,8 @@
         <div class="hashimoto-page-name">New Post</div>
         
         <div class="hashimoto-post-word">
-          <p class="hashimoto-p">用語 <input class="hashimoto-word" type="text" name="word"></p>
-          <p class="hashimoto-p">意味 <input class="hashimoto-meaning" type="text" name="meaning" ></p>
+          <p class="hashimoto-p">用語 <input v-model="word" class="hashimoto-word" type="text" name="word" id="word"></p>
+          <p class="hashimoto-p">意味 <input v-model="meaning" class="hashimoto-meaning" type="text" name="meaning" id="meaning" ></p>
         </div>
       </form>
 

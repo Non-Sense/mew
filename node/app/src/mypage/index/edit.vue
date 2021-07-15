@@ -8,8 +8,8 @@
       <div class="hashimoto-page-name">Edit</div>
       
       <div class="hashimoto-edit-word">
-        <p class="hashimoto-p">用語 <input class="hashimoto-word" type="text" name="word"></p>
-        <p class="hashimoto-p">意味 <input class="hashimoto-meaning" type="text" name="meaning" ></p>
+        <p class="hashimoto-p">用語 <input v-model="word" class="hashimoto-word" type="text" name="word" id="word"></p>
+        <p class="hashimoto-p">意味 <input v-model="meaning" class="hashimoto-meaning" type="text" name="meaning" id="meanning" ></p>
       </div>
     </form>
     </div>
