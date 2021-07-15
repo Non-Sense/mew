@@ -21,8 +21,8 @@ interface BookMapper {
     @Select("SELECT * FROM book WHERE user_id = #{userId} AND public = true")
     fun selectPublicWithUserId(userId: Int): List<Book>
 
-    @Select("SELECT * FROM book WHERE title LIKE #{pattern} LIMIT 300")
-    fun findByTitle(pattern: String): List<Book>
+    @Select("SELECT * FROM book WHERE title LIKE #{pattern} AND user_id = #{userId} LIMIT 300")
+    fun findByTitle(pattern: String, userId: Int): List<Book>
 
     @Select("SELECT * FROM book WHERE title LIKE #{pattern} AND public = true LIMIT 300")
     fun findPublicByTitle(pattern: String): List<Book>
