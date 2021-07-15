@@ -2,10 +2,7 @@ package jp.ac.gunmau.andolab.mew.mapper
 
 import jp.ac.gunmau.andolab.mew.model.Book
 import jp.ac.gunmau.andolab.mew.model.BookWithRate
-import org.apache.ibatis.annotations.Insert
-import org.apache.ibatis.annotations.Mapper
-import org.apache.ibatis.annotations.Select
-import org.apache.ibatis.annotations.Update
+import org.apache.ibatis.annotations.*
 
 @Mapper
 interface BookMapper {
@@ -41,4 +38,7 @@ interface BookMapper {
 
     @Update("UPDATE book SET title = #{title}, public = #{public} WHERE book_id = #{id}")
     fun update(id:Int, title:String, public:Boolean):Boolean
+
+    @Delete("DELETE FROM book WHERE book_id = #{bookId}")
+    fun delete(bookId: Int):Boolean
 }

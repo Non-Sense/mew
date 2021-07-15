@@ -50,6 +50,10 @@ class BookService @Autowired constructor(private val dao: BookMapper) {
         return dao.update(bookId, title, public)
     }
 
+    fun delete(bookId: Int): Boolean{
+        return dao.delete(bookId)
+    }
+
     fun selectAll():List<Book>{
         return dao.selectAll()
     }

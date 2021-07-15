@@ -4,9 +4,9 @@ import java.time.LocalDateTime
 
 data class Word(
     var wordId:Int?,
-    var bookId:Int,
-    var userId:Int?,
+    var bookId:Int?,
     var word:String?,
     var mean:String?,
+    var userId:Int?,
     var createdAt:LocalDateTime?,
     var updatedAt:LocalDateTime?)

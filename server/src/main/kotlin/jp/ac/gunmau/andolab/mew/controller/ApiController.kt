@@ -218,6 +218,16 @@ class ApiController @Autowired constructor(
         return ResponseEntity(HttpStatus.BAD_REQUEST)
     }
 
+    @DeleteMapping("/book/{id}")
+    fun deleteBook(@PathVariable("id") id:Int):ResponseEntity<String>{
+        val b = bookService.selectById(id)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.userId != getUserId(SecurityContextHolder.getContext().authentication))
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(bookService.delete(id))
+            return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
     @GetMapping("/book/public")
     fun getPublicBooks():ResponseEntity<List<BookWithRate>>{
         return responseEntityUtil(bookService.selectBooksWithRate())
@@ -226,13 +236,34 @@ class ApiController @Autowired constructor(
 
     @PostMapping("/word")
     fun postWord(@RequestBody word:Word):ResponseEntity<String>{
-        if(word.word == null || word.mean == null)
+        if(word.word == null || word.mean == null || word.bookId == null)
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
-        val book = bookService.selectById(word.bookId)?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        val book = bookService.selectById(word.bookId!!)?: return ResponseEntity(HttpStatus.NOT_FOUND)
         // 自分が作成した単語帳じゃないと追加できない
         if(userId!=book.userId)
             return ResponseEntity(HttpStatus.NOT_FOUND)
+        word.userId = userId
+        try {
+            wordService.insert(word)
+        } catch (e: DuplicateKeyException){
+            return ResponseEntity(null, HttpStatus.CONFLICT)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
+    }
+
+    @PostMapping("/book/{id}/word")
+    fun postWordOnBook(@PathVariable(name = "id")bookId: Int,
+                       @RequestBody word: Word): ResponseEntity<String>{
+        word.mean?:word.word?:return ResponseEntity(HttpStatus.BAD_REQUEST)
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val book = bookService.selectById(bookId)?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(userId!=book.userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        word.bookId = bookId
+        word.userId = userId
         try {
             wordService.insert(word)
         } catch (e: DuplicateKeyException){
@@ -254,7 +285,11 @@ class ApiController @Autowired constructor(
     }
     @GetMapping("/book/{id}/word")
     fun getBookWord(@PathVariable(name="id") bookId: Int): ResponseEntity<List<Word>>{
-        return responseEntityUtil(wordService.selectByBookId(bookId))
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.userId==userId || b.public==true)
+            return responseEntityUtil(wordService.selectByBookId(bookId))
+        return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
 
@@ -262,6 +297,24 @@ class ApiController @Autowired constructor(
     fun findWord(@RequestParam(name="word",required = false) word: String?,
                  @RequestParam(name="mean",required = false) mean: String?): ResponseEntity<List<Word>>{
         word?:mean?:return ResponseEntity(listOf(),HttpStatus.BAD_REQUEST)
+        if(word!=null){
+            return responseEntityUtil(wordService.findByWord(patternUtil(word)))
+        }
+        return responseEntityUtil(wordService.findByMean(patternUtil(mean!!)))
+    }
+
+    @GetMapping("/book/{id}/word/find")
+    fun findWordOnBook(@PathVariable(name="id")bookId: Int,
+                       @RequestParam(name="word",required = false) word: String?,
+                       @RequestParam(name="mean",required = false) mean: String?): ResponseEntity<List<Word>>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.public!=true || b.userId != userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        word?:mean?:return responseEntityUtil(wordService.selectByBookId(bookId))
+        if(word!=null&&mean!=null){
+            return responseEntityUtil(wordService.find(bookId,word,mean))
+        }
         if(word!=null){
             return responseEntityUtil(wordService.findByWord(patternUtil(word)))
         }
@@ -295,6 +348,16 @@ class ApiController @Autowired constructor(
                 return ResponseEntity(HttpStatus.OK)
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+    @DeleteMapping("/word/{id}")
+    fun deleteWord(@PathVariable(name="id") id:Int): ResponseEntity<String>{
+        val w = wordService.selectById(id)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(w.userId != getUserId(SecurityContextHolder.getContext().authentication))
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(wordService.delete(id))
+            return ResponseEntity(HttpStatus.OK)
         return ResponseEntity(HttpStatus.BAD_REQUEST)
     }
 
