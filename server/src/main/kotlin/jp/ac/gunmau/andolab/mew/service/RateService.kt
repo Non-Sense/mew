@@ -11,7 +11,7 @@ class RateService @Autowired constructor(private val dao: RateMapper){
         return dao.insert(rate)>0
     }
 
-    fun selectByRateId(rateId: Int): Rate{
+    fun selectByRateId(rateId: Int): Rate?{
         return dao.selectWithRateId(rateId)
     }
 
@@ -21,6 +21,14 @@ class RateService @Autowired constructor(private val dao: RateMapper){
 
     fun selectByUserId(userId: Int): List<Rate>{
         return dao.selectWithUserId(userId)
+    }
+
+    fun selectWithBookIdAndUserId(bookId: Int, userId: Int): Rate?{
+        return dao.selectWithBookIdAndUserId(bookId, userId)
+    }
+
+    fun updateRate(rateId: Int, rate:Int): Boolean{
+        return dao.updateRate(rateId, rate)
     }
 
     fun getAverage(bookId: Int): Double?{

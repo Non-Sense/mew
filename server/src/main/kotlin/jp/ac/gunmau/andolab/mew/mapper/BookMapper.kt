@@ -5,6 +5,7 @@ import jp.ac.gunmau.andolab.mew.model.BookWithRate
 import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Select
+import org.apache.ibatis.annotations.Update
 
 @Mapper
 interface BookMapper {
@@ -31,4 +32,13 @@ interface BookMapper {
 
     @Select("SELECT * FROM book LIMIT 300")
     fun selectAll(): List<Book>
+
+    @Update("UPDATE book SET title = #{title} WHERE book_id = #{id}")
+    fun updateTitle(id: Int, title:String):Boolean
+
+    @Update("UPDATE book SET public = #{public} WHERE book_id = #{id}")
+    fun updatePublic(id:Int, public:Boolean):Boolean
+
+    @Update("UPDATE book SET title = #{title}, public = #{public} WHERE book_id = #{id}")
+    fun update(id:Int, title:String, public:Boolean):Boolean
 }

@@ -33,6 +33,14 @@ class UserService @Autowired constructor(private val dao: UserMapper): UserDetai
         return dao.selectAll()
     }
 
+    fun updatePassword(nameId: String, password:String):Boolean{
+        return dao.updatePassword(nameId, password)
+    }
+
+    fun updateDisplayName(nameId: String, displayName: String): Boolean{
+        return dao.updateName(nameId, displayName)
+    }
+
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(username: String): UserDetails {
         select(username).let {

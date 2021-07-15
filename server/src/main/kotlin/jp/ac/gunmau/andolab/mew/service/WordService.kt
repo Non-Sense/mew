@@ -29,6 +29,18 @@ class WordService @Autowired constructor(private val dao: WordMapper){
         return dao.findByMean(pattern)
     }
 
+    fun updateWord(wordId: Int, word:String): Boolean{
+        return dao.updateWord(wordId, word)
+    }
+
+    fun updateMean(wordId: Int, mean: String): Boolean{
+        return dao.updateMean(wordId, mean)
+    }
+
+    fun update(wordId: Int, word: String, mean: String): Boolean{
+        return dao.update(wordId, word, mean)
+    }
+
     fun selectAll(): List<Word>{
         return dao.selectAll()
     }

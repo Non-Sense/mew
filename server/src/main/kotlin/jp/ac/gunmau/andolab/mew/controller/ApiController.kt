@@ -145,6 +145,9 @@ class ApiController @Autowired constructor(
     @PostMapping("/book")
     fun postBook(@RequestBody book:Book): ResponseEntity<String>{
         book.userId = getUserId(SecurityContextHolder.getContext().authentication)
+        if(book.public==null)
+            book.public = false
+        book.title?:return ResponseEntity(HttpStatus.BAD_REQUEST)
         try {
             bookService.insert(book)
         } catch (e: DuplicateKeyException){
@@ -169,7 +172,8 @@ class ApiController @Autowired constructor(
         val currentUserId = getUserId(SecurityContextHolder.getContext().authentication)
         return responseEntityUtil(bookService.selectById(id)?.let {
             when{
-                (it.public) -> it
+                // 自分の単語帳か公開状態の単語帳を取得できる
+                (it.public==true) -> it
                 (it.userId==currentUserId) -> it
                 else -> null
             }
@@ -186,6 +190,31 @@ class ApiController @Autowired constructor(
         return ResponseEntity.ok(bookService.selectAll())
     }
 
+    @PutMapping("/book/{id}")
+    fun updateBook(@PathVariable("id") id: Int,
+                   @RequestBody book: Book): ResponseEntity<String>{
+        val b = bookService.selectById(id)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        // 作成者以外編集できないことにする
+        if(b.userId != getUserId(SecurityContextHolder.getContext().authentication))
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(book.public!=null && book.title!=null){
+            if(bookService.update(id, book.title!!, book.public!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        if(book.public!=null){
+            if(bookService.updatePublic(id, book.public!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        if(book.title!=null){
+            if(bookService.updateTitle(id, book.title!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
     @GetMapping("/book/public")
     fun getPublicBooks():ResponseEntity<List<BookWithRate>>{
         return responseEntityUtil(bookService.selectBooksWithRate())
@@ -194,6 +223,13 @@ class ApiController @Autowired constructor(
 
     @PostMapping("/word")
     fun postWord(@RequestBody word:Word):ResponseEntity<String>{
+        if(word.word == null || word.mean == null)
+            return ResponseEntity(HttpStatus.BAD_REQUEST)
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val book = bookService.selectById(word.bookId)?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        // 自分が作成した単語帳じゃないと追加できない
+        if(userId!=book.userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
         try {
             wordService.insert(word)
         } catch (e: DuplicateKeyException){
@@ -234,6 +270,32 @@ class ApiController @Autowired constructor(
         return ResponseEntity.ok(wordService.selectAll())
     }
 
+    @PutMapping("/word/{id}")
+    fun updateWord(@PathVariable(name="id") id:Int,
+                    @RequestBody word: Word): ResponseEntity<String>{
+        val w = wordService.selectById(id)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        // 自分が追加した単語じゃないと編集できない
+        if(w.userId != getUserId(SecurityContextHolder.getContext().authentication))
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(word.word!=null&&word.mean!=null){
+            if(wordService.update(id, word.word!!, word.mean!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        if(word.word!=null){
+            if(wordService.updateWord(id, word.word!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        if(word.mean!=null){
+            if(wordService.updateMean(id, word.mean!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+
     @PostMapping("/comment")
     fun postComment(@RequestBody comment: Comment): ResponseEntity<String>{
         comment.userId = getUserId(SecurityContextHolder.getContext().authentication)
@@ -271,6 +333,7 @@ class ApiController @Autowired constructor(
 
     @PostMapping("/rate")
     fun postRate(@RequestBody rate: Rate):ResponseEntity<String>{
+        rate.bookId?:return ResponseEntity(HttpStatus.BAD_REQUEST)
         rate.userId = getUserId(SecurityContextHolder.getContext().authentication)
         try{
             rateService.insert(rate)
@@ -307,6 +370,39 @@ class ApiController @Autowired constructor(
     @GetMapping("/rates")
     fun getAllRate(): ResponseEntity<List<Rate>>{
         return ResponseEntity.ok(rateService.selectAll())
+    }
+
+    @PutMapping("/book/{id}/rate")
+    fun updateRate(@PathVariable(name = "id") bookId: Int,
+                   @RequestBody rate: Rate): ResponseEntity<String>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val r = rateService.selectWithBookIdAndUserId(bookId, userId)?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(rateService.updateRate(r.rateId!!, rate.rate))
+            return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+
+    /**
+     * passwordは平文で送ってもらう
+     */
+    @PutMapping("/user/{nameId}")
+    fun updateUser(@RequestBody user:User):ResponseEntity<String>{
+        val nameId = SecurityContextHolder.getContext().authentication.name
+
+        if(user.name!=null){
+            userService.updateDisplayName(nameId, user.name!!)
+        }
+        try {
+            if (!user.password.matches(bcryptRegex)) {
+                val encoder = BCryptPasswordEncoder()
+                user.password = encoder.encode(user.password)
+            }
+            userService.updatePassword(nameId, user.password)
+        }catch (e:NullPointerException){
+        }
+
+        return ResponseEntity(HttpStatus.OK)
     }
 
 }
