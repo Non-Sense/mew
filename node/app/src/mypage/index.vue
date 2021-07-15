@@ -74,7 +74,7 @@ export default {
             break;
           case 403:
             // アクセス拒否: ログインし直してもらう
-            this.$router.push("/test/login");
+            this.$router.push("/test/login"); // <- TODO
             break;
           case 404:
             // 1件もヒットしなかった <-404返さない方がいいですか?
@@ -102,7 +102,7 @@ export default {
             break;
           case 403:
             // アクセス拒否: ログインし直してもらう
-            this.$router.push("/test/login");
+            this.$router.push("/test/login"); // <- TODO
             break;
           case 404:
             // 1件も存在しない
