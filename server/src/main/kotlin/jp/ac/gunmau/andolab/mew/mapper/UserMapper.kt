@@ -4,6 +4,7 @@ import jp.ac.gunmau.andolab.mew.model.User
 import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Mapper
 import org.apache.ibatis.annotations.Select
+import org.apache.ibatis.annotations.Update
 
 @Mapper
 interface UserMapper {
@@ -21,4 +22,17 @@ interface UserMapper {
 
     @Select("SELECT * FROM user LIMIT 300")
     fun selectAll(): List<User>
+
+    @Update("UPDATE user SET name = #{name} WHERE user_id = #{id}")
+    fun updateNameWithId(id: Int, name:String):Boolean
+
+    @Update("UPDATE user SET password = #{password} WHERE user_id = #{id}")
+    fun updatePasswordWithId(id:Int, password:String):Boolean
+
+    @Update("UPDATE user SET name = #{name} WHERE name_id = #{nameId}")
+    fun updateName(nameId: String, name:String):Boolean
+
+    @Update("UPDATE user SET password = #{password} WHERE name_id = #{nameId}")
+    fun updatePassword(nameId:String, password:String):Boolean
+
 }
