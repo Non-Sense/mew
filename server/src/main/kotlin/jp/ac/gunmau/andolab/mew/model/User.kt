@@ -5,11 +5,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 
-data class User(var userId:Int?, var nameId:String?, var name:String?, private var password:String?, var createdAt: LocalDateTime?, var updatedAt: LocalDateTime?): UserDetails {
+data class User(var userId:Int?,
+                var nameId:String?,
+                var name:String?,
+                private var password:String?,
+                var createdAt: LocalDateTime?,
+                var updatedAt: LocalDateTime?): UserDetails {
 
     companion object{
         private val nameIdRegex = Regex("""^\w{5,15}$""")
-        private val nameRegex = Regex("""^[0-9a-zA-Zぁ-んァ-ヶ一-龠々ー]{1,50}$""")
+        private val nameRegex = Regex("""^[0-9a-zA-Zぁ-んァ-ヶ一-龠々ー ]{1,50}$""")
         private val passwordRegex = Regex("""^.{6,}""")
     }
 

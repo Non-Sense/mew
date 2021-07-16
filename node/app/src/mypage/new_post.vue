@@ -13,3 +13,48 @@
     </form>
   </div>
 </template>
+
+<script>
+import axios from "axios";
+import config from "@/const.js"
+
+export default {
+  name: "new_post",
+  data() {
+    return {
+    }
+  },
+
+  methods: {
+    // 単語帳の作成
+    addBook(){
+      axios.post(config.baseUrl+"/api/book", {
+        title: "",      // <- TODO
+        public: false   // <- TODO
+      },
+      {headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName) }
+      }).then((res)=>{
+        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
+        if(res.status===200) {
+          console.log("OK") // <- TODO: 成功したのでリダイレクトするなりなんなり
+        }
+      }).catch((error)=>{
+        switch (error.response.status){
+          case 400:
+            // リクエストが不正
+            break;
+          case 403:
+            // アクセス拒否: ログインし直してもらう
+            this.$router.push("/test/login"); // <- TODO
+            break;
+          case 500:
+            // サーバ内部エラー
+            break;
+          default:
+            // 多分サーバが死んでいる
+        }
+      })
+    },
+  }
+}
+</script>
