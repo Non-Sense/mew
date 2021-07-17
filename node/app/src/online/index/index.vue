@@ -45,6 +45,14 @@
 </div>
 </template>
 <script>
+import axios from "axios";
+import config from "@/const.js"
+
+function getParam(){
+  let params = new URLSearchParams(document.location.search.substring(1));
+  return params.get("id");
+}
+
 export default {
   name: "online_index",
   data() {
@@ -52,8 +60,226 @@ export default {
       modalFlag: false,
     }
   },
-
+  created: function () {
+    this.getRate();
+    this.getWord();
+    this.getComment();
+  },
   methods: {
+    // 単語帳IDで単語一覧取得
+    getWord(){
+      let bookId = getParam();
+      if(bookId == null) {
+        // パラメータが設定されていない
+        console.error("getParam: id == null");
+        return;
+      }
+      axios.get(config.baseUrl+"/api/book/"+bookId+"/word", {
+        headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
+      }).then((res)=>{
+        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
+
+        console.log(res.data);  // <- TODO
+      }).catch((error)=>{
+        switch (error.response.status){
+          case 400:
+            // リクエストが不正
+            break;
+          case 403:
+            this.$router.push("/test/login"); // <- TODO
+            break;
+          case 404:
+            // 閲覧できない単語帳・そもそも無い
+            break;
+          case 500:
+            // サーバ内部エラー
+            break;
+          default:
+            // 多分サーバが死んでいる
+        }
+      })
+    },
+    // 単語帳IDで単語帳の評価値を取得
+    getRate(){
+      let bookId = getParam();
+      if(bookId == null) {
+        // パラメータが設定されていない
+        console.error("getParam: id == null");
+        return;
+      }
+      axios.get(config.baseUrl+"/api/book/"+bookId+"/rate", {
+        headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
+      }).then((res)=>{
+        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
+
+        console.log(res.data);  // <- TODO
+      }).catch((error)=>{
+        switch (error.response.status){
+          case 400:
+            // リクエストが不正
+            break;
+          case 403:
+            this.$router.push("/test/login"); // <- TODO
+            break;
+          case 404:
+            // 閲覧できない単語帳・そもそも無い
+            break;
+          case 500:
+            // サーバ内部エラー
+            break;
+          default:
+            // 多分サーバが死んでいる
+        }
+      })
+    },
+    // 単語帳IDでコメント一覧取得
+    getComment(){
+      let bookId = getParam();
+      if(bookId == null) {
+        // パラメータが設定されていない
+        console.error("getParam: id == null");
+        return;
+      }
+      axios.get(config.baseUrl+"/api/book/"+bookId+"/comment", {
+        headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
+      }).then((res)=>{
+        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
+
+        console.log(res.data);  // <- TODO
+      }).catch((error)=>{
+        switch (error.response.status){
+          case 400:
+            // リクエストが不正
+            break;
+          case 403:
+            this.$router.push("/test/login"); // <- TODO
+            break;
+          case 404:
+            // 閲覧できない単語帳・そもそも無い
+            break;
+          case 500:
+            // サーバ内部エラー
+            break;
+          default:
+            // 多分サーバが死んでいる
+        }
+      })
+    },
+    // 単語帳IDで評価値を送信
+    postRate(){
+      let bookId = getParam();
+      if(bookId == null) {
+        // パラメータが設定されていない
+        console.error("getParam: id == null");
+        return;
+      }
+      axios.post(config.baseUrl+"/api/book/"+bookId+"/rate", {
+        rate: 1 // <- TODO
+      }, {
+        headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
+      }).then((res)=>{
+        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
+        if(res.status===200) {
+          console.log("OK");  // <- TODO
+        }
+      }).catch((error)=>{
+        switch (error.response.status){
+          case 400:
+            // リクエストが不正
+            break;
+          case 403:
+            this.$router.push("/test/login"); // <- TODO
+            break;
+          case 404:
+            // 閲覧できない単語帳・そもそも無い
+            break;
+          case 409:
+            // 重複している(評価済み)
+            break;
+          case 500:
+            // サーバ内部エラー
+            break;
+          default:
+            // 多分サーバが死んでいる
+        }
+      })
+    },
+    // 単語帳IDでコメントを送信
+    postComment(){
+      let bookId = getParam();
+      if(bookId == null) {
+        // パラメータが設定されていない
+        console.error("getParam: id == null");
+        return;
+      }
+      axios.post(config.baseUrl+"/api/book/"+bookId+"/comment", {
+        comment: "" // <- TODO
+      }, {
+        headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
+      }).then((res)=>{
+        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
+        if(res.status===200) {
+          console.log("OK");  // <- TODO
+        }
+      }).catch((error)=>{
+        switch (error.response.status){
+          case 400:
+            // リクエストが不正
+            break;
+          case 403:
+            this.$router.push("/test/login"); // <- TODO
+            break;
+          case 404:
+            // 閲覧できない単語帳・そもそも無い
+            break;
+          case 500:
+            // サーバ内部エラー
+            break;
+          default:
+            // 多分サーバが死んでいる
+        }
+      })
+    },
+    // 単語帳IDを指定して単語を検索
+    findWord(){
+      let searchWord = "test";  // <- TODO
+      let searchMean = "test";  // <- TODO
+      let bookId = getParam();
+      if(bookId == null) {
+        // パラメータが設定されていない
+        console.error("getParam: id == null");
+        return;
+      }
+      axios.get(config.baseUrl+"/api/book/"+bookId+"/word/find", {
+        params:{
+          mean: searchMean===""?null:searchMean,
+          word: searchWord===""?null:searchWord
+        },
+        headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
+      }).then((res)=>{
+        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
+
+        console.log(res.data);  // <- TODO
+      }).catch((error)=>{
+        switch (error.response.status){
+          case 400:
+            // リクエストが不正
+            break;
+          case 403:
+            this.$router.push("/test/login"); // <- TODO
+            break;
+          case 404:
+            // ヒット数が0・そもそも単語帳が無い・見れない単語帳
+            break;
+          case 500:
+            // サーバ内部エラー
+            break;
+          default:
+            // 多分サーバが死んでいる
+        }
+      })
+    },
+
     modal(){
       console.log(this.modalFlag);
       this.modalFlag = !this.modalFlag;
