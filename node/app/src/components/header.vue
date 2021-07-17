@@ -6,6 +6,9 @@
         <div class="button">
             <ul>
                 <li>
+                    <router-link to="/mypage" router-link-active exact-active-class="class–¼">
+                        <a>MyPage</a>
+                    </router-link>
                     <button   button type="button" onclick="location.href='#'" class="mypage">MyPage</button>
                 </li>
                 <li>
