@@ -17,7 +17,7 @@
           <td class="tomita_miword">{{item.word}}</td>
           <td class="tomita_mimeaning">{{item.mean}}</td>
           <td class="tomita_edit">
-            <router-link :to="{ name: 'mypage-index-edit', params: { id:item.wordId }}"><input type="button" name="edit" value="Edit" class="tomita_edit_button"></router-link>
+            <router-link :to="{ name: 'mypage-index-edit', params: { id:clickEdit(item.wordId) }}"><input type="button" name="edit" value="Edit" class="tomita_edit_button"></router-link>
           </td>
         </tr>
       </table>
