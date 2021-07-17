@@ -5,9 +5,8 @@
     <div class="tomita_mitop">
       <p>数学単語帳
       <input type="search" name="search" v-model="search" placeholder="Search" class="tomita_misearch">
-      <input type="button" name="new_post" value="New Post" class="tomita_new_post">
+      <a href=" ../mypage/index/new_post?id=1"><input type="button" name="new_post" value="New Post" class="tomita_new_post"></a>
       </p>
-
     </div>
   </form>
 
@@ -17,7 +16,7 @@
         <td class="tomita_miword">math</td>
         <td class="tomita_mimeaning">数学</td>
         <td class="tomita_edit">
-          <input type="button" name="edit" value="Edit" class="tomita_edit_button">
+          <a href=" ../mypage/index/edit?id=1"><input type="button" name="edit" value="Edit" class="tomita_edit_button"></a>
         </td>
       </tr>
     </table>
@@ -29,7 +28,7 @@
         <td class="tomita_miword">用語</td>
         <td class="tomita_mimeaning">意味</td>
         <td class="tomita_edit">
-          <input type="button" name="edit" value="Edit" class="tomita_edit_button">
+          <a href=" ../mypage/index/edit?id=1"><input type="button" name="edit" value="Edit" class="tomita_edit_button"></a>
         </td>
       </tr>
     </table>
