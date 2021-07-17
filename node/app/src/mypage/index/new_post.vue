@@ -1,8 +1,8 @@
 <template>
   <div class="hashimoto-main">     
-      <form action="送信先のURL" method="post">
-        <div class="hashimoto-button">
-          <input class="hashimoto-save" type="submit" value="Save">
+      <form @submit="addWord" action="#">
+        <div class="hashimoto-button" value="Save" v-on:click="addWord">
+          <input class="hashimoto-save" type="submit">
         </div>
         <div class="hashimoto-page-name">New Post</div>
         
@@ -29,6 +29,8 @@ export default {
   name: "edit_word",
   data() {
     return {
+      word: "",
+      meaning: ""
     }
   },
 
@@ -41,8 +43,8 @@ export default {
         return;
       }
       axios.post(config.baseUrl+"/api/book/"+bookId+"/word", {
-            word: "",   // <- TODO
-            mean: ""    // <- TODO
+            word: this.word,   // <- TODO
+            mean: this.meaning   // <- TODO
           },
           {
             headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
