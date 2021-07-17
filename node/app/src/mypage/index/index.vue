@@ -4,35 +4,26 @@
   <form action="" method="post">
     <div class="tomita_mitop">
       <p>数学単語帳
-      <input type="search" name="search" v-model="search" placeholder="Search" class="tomita_misearch">
-      <a href=" ../mypage/index/new_post?id=1"><input type="button" name="new_post" value="New Post" class="tomita_new_post"></a>
+      <input type="search" name="search" v-model="search" v-on:change="findWord" placeholder="Search" class="tomita_misearch">
+      <router-link :to="{ name: 'mypage-index-new_post', params: { id:id }}"><input type="button" name="new_post" value="New Post" class="tomita_new_post"></router-link>
       </p>
     </div>
   </form>
 
-  <div class="tomita_miword_list">
-    <table>
-      <tr>
-        <td class="tomita_miword">math</td>
-        <td class="tomita_mimeaning">数学</td>
-        <td class="tomita_edit">
-          <a href=" ../mypage/index/edit?id=1"><input type="button" name="edit" value="Edit" class="tomita_edit_button"></a>
-        </td>
-      </tr>
-    </table>
+  <div v-for="item in items" v-bind:key="item.wordId">
+    <div class="tomita_miword_list">
+      <table>
+        <tr>
+          <td class="tomita_miword">{{item.word}}</td>
+          <td class="tomita_mimeaning">{{item.mean}}</td>
+          <td class="tomita_edit">
+            <router-link :to="{ name: 'mypage-index-edit', params: { id:item.wordId }}"><input type="button" name="edit" value="Edit" class="tomita_edit_button"></router-link>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
-
-  <div class="tomita_miword_list">
-    <table>
-      <tr>
-        <td class="tomita_miword">用語</td>
-        <td class="tomita_mimeaning">意味</td>
-        <td class="tomita_edit">
-          <a href=" ../mypage/index/edit?id=1"><input type="button" name="edit" value="Edit" class="tomita_edit_button"></a>
-        </td>
-      </tr>
-    </table>
-  </div>
+  
 </div>
 </template>
 
@@ -50,6 +41,10 @@ export default {
   name: "edit_word",
   data() {
     return {
+      id:getParam(),
+      search:"",
+      items:[{wordId:"",bookId:"",word:"",mean:"",userId:"",createdAt:"",updatedAt:""}],
+      editId:0
     }
   },
   // ロード終了時に取得してくる?
@@ -94,8 +89,8 @@ export default {
     // 単語帳IDを指定して単語を検索
     findWord(){
       // 単語と意味それぞれで検索できますが、とりあえず同じ値とかを入れておけばいいんじゃないんでしょうか
-      let searchWord = "test";  // <- TODO
-      let searchMean = "test";  // <- TODO
+      let searchWord = this.search;  // <- TODO
+      let searchMean = this.search;  // <- TODO
       let bookId = getParam();
       if(bookId == null) {
         // パラメータが設定されていない
@@ -130,6 +125,9 @@ export default {
             // 多分サーバが死んでいる
         }
       })
+    },
+    clickEdit(id){
+      return this.editId = id;
     },
   }
 }
