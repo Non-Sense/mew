@@ -4,7 +4,7 @@
   <form action="" method="post">
     <div class="tomita_mitop">
       <p>数学単語帳
-      <input type="search" name="search" placeholder="Search" class="tomita_misearch">
+      <input type="search" name="search" v-model="search" placeholder="Search" class="tomita_misearch">
       <input type="button" name="new_post" value="New Post" class="tomita_new_post">
       </p>
 

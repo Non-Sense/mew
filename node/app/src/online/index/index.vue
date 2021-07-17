@@ -22,7 +22,6 @@
   <form action="" method="post">
     <div class="tomita_oitop">
       <p>数学単語帳
-      <input type="search" name="search" placeholder="Search" class="tomita_oisearch">
       <input type="search" name="search" v-model="search" placeholder="Search" class="tomita_oisearch">
       <input type="button" name="Review" value="Review" class="tomita_oiReview" v-on:click="modal">
       </p>
