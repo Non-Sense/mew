@@ -47,10 +47,8 @@ export default new Router({
       name: "mypage-edit"
     },
     {
-      path: '/mypage/new_post?id=:id',
+      path: '/mypage/new_post',
       component: MyPageNewPost,
-      props: true,
-      name: "mypage-new_post"
     },
     {
       path: '/mypage/index?id=:id',

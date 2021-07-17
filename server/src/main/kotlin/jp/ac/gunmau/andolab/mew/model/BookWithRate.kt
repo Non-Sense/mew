@@ -7,6 +7,6 @@ data class BookWithRate(
     var userId:Int?,
     var title:String,
     var public:Boolean = false,
-    var rate:Double,
+    var rate:Double?,
     var createdAt: LocalDateTime?,
     var updatedAt: LocalDateTime?)
