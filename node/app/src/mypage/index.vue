@@ -9,7 +9,7 @@
           <input v-model="search" v-on:change="findMyBooks" type="text" placeholder="    Search"/>
         </li>
         <li>
-          <button>New Post</button>
+          <button @click="$router.push('/mypage/new_post')">New Post</button>
         </li>
       </ul>
     </div>
