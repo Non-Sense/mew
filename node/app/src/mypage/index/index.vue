@@ -1,7 +1,7 @@
 <template>
 <div class="tomita_mibody">
 
-  <form action="" method="post">
+  <form action="#">
     <div class="tomita_mitop">
       <p>数学単語帳
       <input type="search" name="search" v-model="search" v-on:change="findWord" placeholder="Search" class="tomita_misearch">
