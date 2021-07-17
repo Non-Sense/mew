@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.*
 
 @Mapper
 interface WordMapper {
-    @Insert("INSERT INTO word(book_id, word, mean) VALUES(#{bookId}, #{word}, #{mean})")
+    @Insert("INSERT INTO word(book_id, word, mean, user_id) VALUES(#{bookId}, #{word}, #{mean}, #{userId})")
     fun insert(model: Word): Int
 
     @Select("SELECT * FROM word WHERE word_id = #{id}")
