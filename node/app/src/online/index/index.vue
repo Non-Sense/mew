@@ -19,28 +19,25 @@
     </div>
   </div>
 
-  <form action="" method="post">
+  <form action="#">
     <div class="tomita_oitop">
       <p>数学単語帳
-      <input type="search" name="search" v-model="search" placeholder="Search" class="tomita_oisearch">
+      <input type="search" name="search" v-model="search" v-on:change="findWord" placeholder="Search" class="tomita_oisearch">
       <input type="button" name="Review" value="Review" class="tomita_oiReview" v-on:click="modal">
       </p>
 
     </div>
   </form>
 
-  <div class="tomita_oiword_list">
-    <table>
-      <td class="tomita_oiword">math</td>
-      <td class="tomita_oimeaning">数学</td>
-    </table>
-  </div>
-
-  <div class="tomita_oiword_list">
-    <table>
-      <td class="tomita_oiword">用語</td>
-      <td class="tomita_oimeaning">意味</td>
-    </table>
+  <div v-for="item in items" v-bind:key="item.wordId">
+    <div class="tomita_miword_list">
+      <table>
+        <tr>
+          <td class="tomita_miword">{{item.word}}</td>
+          <td class="tomita_mimeaning">{{item.mean}}</td>
+        </tr>
+      </table>
+    </div>
   </div>
 </div>
 </template>
@@ -78,7 +75,7 @@ export default {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items=res.data;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
@@ -111,7 +108,7 @@ export default {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items=res.data;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
@@ -144,7 +141,7 @@ export default {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items=res.data;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
@@ -242,8 +239,8 @@ export default {
     },
     // 単語帳IDを指定して単語を検索
     findWord(){
-      let searchWord = "test";  // <- TODO
-      let searchMean = "test";  // <- TODO
+      let searchWord = this.search;  // <- TODO
+      let searchMean = this.search;  // <- TODO
       let bookId = getParam();
       if(bookId == null) {
         // パラメータが設定されていない
@@ -258,7 +255,7 @@ export default {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items=res.data;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
