@@ -230,7 +230,7 @@ class ApiController @Autowired constructor(
 
     @GetMapping("/book/public")
     fun getPublicBooks(@RequestParam(name="title",required = false)title:String?):ResponseEntity<List<BookWithRate>>{
-        if(title==null)
+        if(title==null || title=="")
             return responseEntityUtil(bookService.selectBooksWithRate())
         return responseEntityUtil(bookService.findBooksWithRate(patternUtil(title)))
     }
