@@ -6,7 +6,7 @@
           <p>MyPage List</p>
         </li>
         <li>
-          <input v-model="search" type="text" placeholder="    Search"/>
+          <input v-model="search" v-on:change="findMyBooks" type="text" placeholder="    Search"/>
         </li>
         <li>
           <button>New Post</button>
@@ -15,29 +15,22 @@
     </div>
     
     <div class="taisei_title">
-      <ul>
+      <ul v-for="item in items" v-bind:key="item.bookId" v-show="showFlag">
         <li>
-          <input type="button" value="  数学単語帳" />
-          <button>Edit</button>
+          <input type="button" v-bind:value="item.title" />
+          <button @click="$router.push({name:'mypage-edit',params:{ id: clickEdit(item.bookId) }})">Edit</button>
         </li>
-        <li>
-          <input type="button" value="  物理単語帳" />
-          <button>Edit</button>
-        </li>
-        <li>
-          <input type="button" value="  xx単語帳" />
-          <button>Edit</button>
-        </li>
-        <li>
-          <input type="button" value="  yy単語帳" />
-          <button>Edit</button>
-        </li>
+        
       </ul>
     </div>
 
     <div class="taisei_share">
       <p>sharing</p>
-      <input type="button" value="  数学単語帳" />
+      <ul v-for="item in sharingItems" v-bind:key="item.bookId" v-show="showFlag">
+        <li>
+          <input type="button" v-bind:value="item.title" />
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -50,7 +43,30 @@ export default {
   name: "index",
   data() {
     return {
+      search:"",
+      showFlag:false,
+      items:[{bookId:"",userId:"",title:"",public:"",createdAt:"",updatedAt:""}],
+      sharingItems:[{bookId:"",userId:"",title:"",public:"",createdAt:"",updatedAt:""}],
+      editId: 0,
     }
+  },
+
+  created: function () {
+    axios.get(config.baseUrl+"/api/book",
+        {headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName) }
+      }).then((res)=>{
+        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
+        this.items = res.data;
+        this.sharingItems = res.data.filter((e)=>{return e.public});
+        this.showFlag = true;
+        console.log(res.data);
+      }).catch((error)=>{
+        this.msg = "error: "+error.response.status;
+        if(error.response.status === 403){
+          // TODO: トークンが切れたのでもう一度ログインしてもらう
+          this.$router.push("/test/login");
+        }
+      })
   },
 
   methods: {
@@ -59,13 +75,15 @@ export default {
     findMyBooks(){
       axios.get(config.baseUrl+"/api/book/find",{
         params:{
-          title:"", // <- TODO: 検索文字列を入れる
+          title:this.search, // <- TODO: 検索文字列を入れる
           own:1
         },
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items = res.data;
+        this.sharingItems = res.data.filter((e)=>{return e.public});
+        this.showFlag=true;
         console.log(res.data); // <- TODO: 良きように
       }).catch((error)=>{
         switch (error.response.status){
@@ -78,6 +96,7 @@ export default {
             break;
           case 404:
             // 1件もヒットしなかった <-404返さない方がいいですか?
+            this.showFlag=false;
             break;
           case 500:
             // サーバ内部エラー
@@ -87,33 +106,8 @@ export default {
         }
       })
     },
-    // 自分の単語帳を全件取得する
-    getMyBooks(){
-      axios.get(config.baseUrl+"/api/book",{
-        headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
-      }).then((res)=>{
-        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
-        console.log(res.data); // <- TODO: 良きように
-      }).catch((error)=>{
-        switch (error.response.status){
-          case 400:
-            // リクエストが不正
-            break;
-          case 403:
-            // アクセス拒否: ログインし直してもらう
-            this.$router.push("/test/login"); // <- TODO
-            break;
-          case 404:
-            // 1件も存在しない
-            break;
-          case 500:
-            // サーバ内部エラー
-            break;
-          default:
-            // 多分サーバが死んでいる
-        }
-      })
+    clickEdit(id){
+      return this.editId = id;
     },
 
   }
