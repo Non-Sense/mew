@@ -15,7 +15,7 @@
       <p>並び替え:評価の高い順</p>
       <ul v-for="item in sharingItems" v-bind:key="item.bookId" v-show="showFlag">
         <li>
-          <input type="button" v-bind:value="item.title" />
+          <input type="button" @click="$router.push({name:'online-index',params:{ id: item.bookId }})" v-bind:value="item.title" />
           <button v-if="item.rate!=null">評価: {{item.rate}}</button>
           <button v-else>評価: 未評価</button>
         </li>
