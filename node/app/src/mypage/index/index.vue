@@ -65,7 +65,7 @@ export default {
         }
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items=res.data;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
@@ -105,7 +105,7 @@ export default {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items=res.data;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
