@@ -17,7 +17,7 @@
     <div class="taisei_title">
       <ul v-for="item in items" v-bind:key="item.bookId" v-show="showFlag">
         <li>
-          <input type="button" v-bind:value="item.title" />
+          <input type="button" @click="$router.push({name:'mypage-index',params:{ id: clickEdit(item.bookId) }})" v-bind:value="item.title" />
           <button @click="$router.push({name:'mypage-edit',params:{ id: clickEdit(item.bookId) }})">Edit</button>
         </li>
         
@@ -28,7 +28,7 @@
       <p>sharing</p>
       <ul v-for="item in sharingItems" v-bind:key="item.bookId" v-show="showFlag">
         <li>
-          <input type="button" v-bind:value="item.title" />
+          <input type="button" @click="$router.push({name:'mypage-index',params:{ id: clickEdit(item.bookId) }})" v-bind:value="item.title" />
         </li>
       </ul>
     </div>
