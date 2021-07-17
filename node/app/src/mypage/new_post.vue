@@ -1,14 +1,14 @@
 <template>
   <div class="hashimoto-main">     
-    <form action="送信先のURL" method="post">
-      <div class="hashimoto-button">
-        <input class="hashimoto-save" type="submit" value="Save">
+    <form @submit="addBook" action="#">
+      <div class="hashimoto-button" v-on:click="addBook">
+        <input  class="hashimoto-save" type="submit" value="Save">
       </div>
       <div class="hashimoto-page-name">New Post</div>
       
       <div class="hashimoto-post-form">
-        <div class="hashimoto-box">単語帳名 <input class="hashimoto-word-book" type="text" name="word-book"></div>
-        <p>share<input class="hashimoto-share" type="checkbox" name="share" ></p>
+        <div class="hashimoto-box">単語帳名 <input v-model="wordBook" class="hashimoto-word-book" type="text" name="word-book" id="word-book"></div>
+        <p>share<input v-model="share" class="hashimoto-share" type="checkbox" name="share" id="share"></p>
       </div>
     </form>
   </div>
@@ -22,6 +22,8 @@ export default {
   name: "new_post",
   data() {
     return {
+      wordBook: "",
+      share: false
     }
   },
 
@@ -29,8 +31,8 @@ export default {
     // 単語帳の作成
     addBook(){
       axios.post(config.baseUrl+"/api/book", {
-        title: "",      // <- TODO
-        public: false   // <- TODO
+        title: this.wordBook,      // <- TODO
+        public: this.share   // <- TODO
       },
       {headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName) }
       }).then((res)=>{
