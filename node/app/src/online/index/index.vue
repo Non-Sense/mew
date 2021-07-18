@@ -7,13 +7,13 @@
             Review
           </div>
           <div class="tomita_evaluation">
-            <input type="number" name="point" value="point" class="tomita_point" min="0" max="5">
+            <input type="number" name="point" value="point" class="tomita_point" min="0" max="5" v-model="point">
               <div class="tomita_five_point">
                 / 5.0点
               </div>
           <div>
-          <input type="text" class="review_comment" placeholder="コメント">
-          <input type="submit" name="submit" value="送信" class="tomita_submit review_submit">
+          <input type="text" class="review_comment" placeholder="コメント" v-model="text">
+          <input type="submit" name="submit" value="送信" class="tomita_submit review_submit" v-on:click="postReview">
         </div>
       </div>
     </div>
@@ -237,6 +237,12 @@ export default {
         }
       })
     },
+
+    postReview(){
+      this.postRate();
+      this.postComment();
+    },
+
     // 単語帳IDを指定して単語を検索
     findWord(){
       let searchWord = this.search;  // <- TODO
