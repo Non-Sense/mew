@@ -127,8 +127,6 @@
   padding: 0;
 }
 
-
-
 .taisei_share{
   margin-top: 5vh;
   margin-left: 10vw;
@@ -139,12 +137,24 @@
   font-style: normal;
   font-weight: normal;
   font-size: 1.7vw;
-
   display: flex;
   align-items: center;
   letter-spacing: 0.1em;
 
   color: #666666;
+}
+
+.taisei_share ul{
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.taisei_share ul li{
+  margin-right: 11vw;
+  margin-bottom: 7vh;
 }
 
 .taisei_share input{
@@ -270,10 +280,10 @@
 }
 
 .taisei_WB button{
-  margin-left: -6.5vw;
+  margin-left: -7vw;
   align-items: center;
   font-size: 1.2vw;
-  color: #c6c6c6;
+  color: #c4c4c4;
   background-color: #F6F7FB;
   border-style: none;
   padding: 0;
