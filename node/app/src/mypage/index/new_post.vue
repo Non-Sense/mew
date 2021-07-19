@@ -1,6 +1,6 @@
 <template>
   <div class="hashimoto-main">     
-      <form @submit.prevent="addWord" >
+      <form @submit.prevent="addWord" action="#!">
         <div class="hashimoto-button">
           <input class="hashimoto-save" type="submit" value="Save">
         </div>
@@ -20,27 +20,25 @@
 import axios from "axios";
 import config from "@/const.js"
 
-function getParam(){
-  let params = new URLSearchParams(document.location.search.substring(1));
-  return params.get("id");
-}
-
 export default {
   name: "edit_word",
   data() {
     return {
+      id: 0,
       word: "",
       meaning: ""
     }
   },
-
+  created() {
+    this.id = this.$route.params.id;
+  },
   methods: {
     // 単語の内容更新
     addWord(){
       // 空文字列を登録しない
       if(this.word==="" && this.meaning==="")
         return;
-      let bookId = getParam();
+      let bookId = this.id;
       if(bookId == null) {
         console.error("getParam: id == null");
         return;
@@ -56,7 +54,7 @@ export default {
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         if(res.status===200) {
           // 単語帳に戻る
-          this.$router.push({name:'mypage-index',params:{ id: bookId }});
+          this.$router.back();
         }
       }).catch((error)=>{
         switch (error.response.status){
@@ -67,6 +65,7 @@ export default {
             this.$router.push("/login");
             break;
           case 404:
+            this.$router.push("/mypage");
             // 自分の単語帳ではない・そもそも無い
             break;
           case 500:

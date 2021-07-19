@@ -2,7 +2,7 @@
   <div class="container">
         <h2>MEW</h2>
 
-    <form id="form" @submit="signup" action="#" class="login_form">
+    <form id="form" @submit.prevent="signup" action="#!" class="login_form">
       <label for="login_id">ログインID 英数字5-15文字</label>
       <input v-model="loginId" type="text" id="login_id" class="login_mail" required minlength="5" maxlength="15" pattern="^\w{5,15}$">
       <br>
@@ -17,7 +17,7 @@
 
       <button type="submit" value="submit" class="login login_button">新規登録</button>
     </form>
-    <a href="../login"><button class="login login_button">ログイン</button></a>
+    <router-link to="/login"><button class="login login_button">ログイン</button></router-link>
     <span v-cloak>{{ msg }}</span>
   </div>
 </template>
@@ -48,11 +48,42 @@ export default {
         name: this.displayName,
         password: this.password
       }).then(()=>{
-        // ここは成功の時
-        this.msg = "OK";
+        this.login();
       }).catch((error)=>{
         // こっちはエラーが返った時
-        this.msg = "error: "+error.response.status;
+        switch (error.response.status){
+          case 400:
+            this.msg = "不正なリクエストです";
+            break;
+          case 409:
+            this.msg = "すでに登録されています";
+            break;
+          case 500:
+          default:
+            this.msg = "サーバエラー";
+        }
+      })
+    },
+    login(){
+      axios.post(config.baseUrl+"/api/login", {
+        nameId: this.loginId,
+        password: this.password
+      }).then((res)=>{
+        // もらったアクセストークンをクッキーにセットする
+        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
+        this.$router.push("/mypage");
+      }).catch((error)=>{
+        switch (error.response.status){
+          case 400:
+            this.msg = "不正なリクエストです";
+            break;
+          case 403:
+            this.msg = "ログインできませんでした";
+            break;
+          case 500:
+          default:
+            this.msg = "サーバエラー";
+        }
       })
     }
   }

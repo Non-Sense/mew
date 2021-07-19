@@ -2,7 +2,7 @@
 
   <div>
     <h2>MEW</h2>
-    <form id="form" @submit="login" action="#" class="login_form">
+    <form id="form" @submit.prevent="login" action="#!" class="login_form">
       <label for="login_id">ログインID</label>
       <input v-model="loginId" type="text" id="login_id" required class="login_mail">
       <br>
@@ -13,7 +13,7 @@
 
       <button type="submit" value="submit" class="login login_button">ログイン</button>
     </form>
-    <a href=" ../signup" class="login_a"><button class="login login_button longin_a">新規登録</button></a>
+    <router-link to="/signup" class="login_a"><button class="login login_button longin_a">新規登録</button></router-link>
     
   <span v-cloak>{{ msg }}</span>
   </div>
@@ -42,9 +42,19 @@ export default {
       }).then((res)=>{
         // もらったアクセストークンをクッキーにセットする
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-        this.msg = "OK token: "+res.headers["x-auth-token"];
+        this.$router.push("/mypage");
       }).catch((error)=>{
-        this.msg = "error: "+error.response.status;
+        switch (error.response.status){
+          case 400:
+            this.msg = "不正なリクエストです";
+            break;
+          case 403:
+            this.msg = "ログインできませんでした";
+            break;
+          case 500:
+          default:
+            this.msg = "サーバエラー";
+        }
       })
     }
   }

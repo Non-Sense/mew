@@ -1,15 +1,13 @@
 <template>
 <div class="tomita_mibody">
 
-  <!-- <form action="#"> -->
-    <div>
+  <div>
     <div class="tomita_mitop">
       <p>{{bookname}}
       <input type="search" name="search" v-model="search" v-on:change="findWord" placeholder="Search" class="tomita_misearch">
       <router-link :to="{ name: 'mypage-index-new_post', params: { id:id }}"><input type="button" name="new_post" value="New Post" class="tomita_new_post"></router-link>
       </p>
     </div>
-  <!-- </form> -->
   </div>
 
   <div v-for="item in items" v-bind:key="item.wordId" v-show="showFlag">
@@ -34,32 +32,29 @@
 import axios from "axios";
 import config from "@/const.js"
 
-function getParam(){
-  let params = new URLSearchParams(document.location.search.substring(1));
-  return params.get("id");
-}
 
 export default {
   name: "edit_word",
   data() {
     return {
-      id:getParam(),
+      id:0,
       search:"",
       items:[{wordId:"",bookId:"",word:"",mean:"",userId:"",createdAt:"",updatedAt:""}],
       editId:0, 
       bookname:"",
-      showFlag:true
+      showFlag:false,
     }
   },
-  // ロード終了時に取得してくる?
+  // ロード終了時に取得してくる
   created: function (){
+    this.id = this.$route.params.id;
     this.getWords();
     this.getBook();
   },
   methods: {
     // 単語帳IDで単語一覧を取得
     getWords(){
-      let bookId = getParam();
+      let bookId = this.id;
       if(bookId == null) {
         // パラメータが設定されていない
         console.error("getParam: id == null");
@@ -82,7 +77,7 @@ export default {
             this.$router.push("/login");
             break;
           case 404:
-            this.showFlag=true;
+            this.showFlag=false;
             // 閲覧できない単語・そもそも無い
             break;
           case 500:
@@ -95,10 +90,13 @@ export default {
     },
     // 単語帳IDを指定して単語を検索
     findWord(){
-      // 単語と意味それぞれで検索できますが、とりあえず同じ値とかを入れておけばいいんじゃないんでしょうか
-      let searchWord = this.search;  // <- TODO
-      let searchMean = this.search;  // <- TODO
-      let bookId = getParam();
+      if(this.search===""){
+        this.getWords();
+        return;
+      }
+      let searchWord = this.search;
+      let searchMean = this.search;
+      let bookId = this.id;
       if(bookId == null) {
         // パラメータが設定されていない
         console.error("getParam: id == null");
@@ -114,7 +112,6 @@ export default {
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         this.items=res.data;
         this.showFlag=true;
-        console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
           case 400:
@@ -136,7 +133,7 @@ export default {
       })
     },
     getBook(){
-      let bookId = getParam();
+      let bookId = this.id;
       if(bookId == null) {
         // パラメータが設定されていない
         console.error("getParam: id == null");
@@ -148,7 +145,6 @@ export default {
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         this.bookname=res.data.title;
-        console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
           case 400:
@@ -158,8 +154,8 @@ export default {
             this.$router.push("/login");
             break;
           case 404:
-            this.showFlag=true;
-            // 閲覧できない単語・そもそも無い
+            // 閲覧できない単語帳・そもそも無い
+            this.$router.push("/mypage");
             break;
           case 500:
             // サーバ内部エラー
