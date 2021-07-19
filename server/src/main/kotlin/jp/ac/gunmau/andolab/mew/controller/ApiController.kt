@@ -402,7 +402,6 @@ class ApiController @Autowired constructor(
                     @RequestBody comment: Comment):ResponseEntity<String>{
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
         val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
-        Logger.getLogger("TEST").info("$userId  $bookId  $b $comment")
         if(b.public!=true && b.userId!=userId)
             return ResponseEntity(HttpStatus.NOT_FOUND)
         comment.bookId = bookId
