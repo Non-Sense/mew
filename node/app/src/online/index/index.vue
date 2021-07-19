@@ -101,7 +101,6 @@ export default {
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         this.items=res.data;
         this.showFlag=true;
-        console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
           case 400:
@@ -297,7 +296,6 @@ export default {
       let t = this;
       return new Promise(function (resolve, reject) {
         let bookId = t.id;
-        console.log(t);
         if (bookId == null) {
           // パラメータが設定されていない
           console.error("getParam: id == null");

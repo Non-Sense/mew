@@ -44,18 +44,17 @@ export default {
   },
   methods: {
     // 公開状態の単語帳を取得する
-    // 検索文字列を空かnullにしておけば全件取得されるはず
-    // たぶん評価が高い順に並んでいると思う(たぶん)
+    // 検索文字列を空かnullにしておけば全件取得される
+    // たぶん評価が高い順に並んでいる
     findBooks(){
       axios.get(config.baseUrl+"/api/book/public", {
         params: {
-          title:this.search // <- TODO 検索する単語帳名を入れる
+          title:this.search
         }, headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         this.sharingItems = res.data;
         this.showFlag = true;
-        console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
           case 400:
