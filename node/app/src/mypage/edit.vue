@@ -1,15 +1,15 @@
 <template>
   <div class="hashimoto-main">     
-    <form action="送信先のURL" method="post">
+    <form @submit="updateBook" action="#">
       <div class="hashimoto-button">
-        <input class="hashimoto-delete" type="submit" value="Delete">
-        <input class="hashimoto-save" type="submit" value="Save">
+        <input class="hashimoto-delete" type="submit" value="Delete" v-on:click="deleteBook">
+        <input class="hashimoto-save" type="submit" value="Save" v-on:click="updateBook">
       </div>
       <div class="hashimoto-page-name">Edit</div>
       
       <div class="hashimoto-edit-form">
-        <div class="hashimoto-box">単語帳名 <input class="hashimoto-word-book" type="text" name="word-book"></div>
-        <p>share<input class="hashimoto-share" type="checkbox" name="share" ></p>
+        <div class="hashimoto-box">単語帳名 <input v-model="wordBook" class="hashimoto-word-book" type="text" name="word-book" id="word-book"></div>
+        <p>share<input v-model="share" class="hashimoto-share" type="checkbox" name="share" id="share"></p>
       </div>
     </form>
   </div>
@@ -28,6 +28,8 @@ export default {
   name: "edit_book",
   data() {
     return {
+      wordBook: "",
+      share: false
     }
   },
 
@@ -49,7 +51,8 @@ export default {
         }
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.wordBook = res.data.title;
+        this.share = res.data.public;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
@@ -78,8 +81,8 @@ export default {
         return;
       }
       axios.put(config.baseUrl+"/api/book/"+bookId, {
-            title: "",      // <- TODO
-            public: false   // <- TODO
+            title: this.wordBook,      // <- TODO
+            public: this.share   // <- TODO
           },
           {
             headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
