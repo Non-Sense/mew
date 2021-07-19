@@ -64,7 +64,7 @@ export default {
         this.msg = "error: "+error.response.status;
         if(error.response.status === 403){
           // TODO: トークンが切れたのでもう一度ログインしてもらう
-          this.$router.push("/test/login");
+          this.$router.push("/login");
         }
       })
   },
@@ -92,7 +92,7 @@ export default {
             break;
           case 403:
             // アクセス拒否: ログインし直してもらう
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 404:
             // 1件もヒットしなかった <-404返さない方がいいですか?

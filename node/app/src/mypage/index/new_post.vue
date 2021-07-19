@@ -64,7 +64,7 @@ export default {
             // リクエストが不正
             break;
           case 403:
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 404:
             // 自分の単語帳ではない・そもそも無い

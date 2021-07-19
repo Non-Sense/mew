@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/components/login.vue'
-import SignUp from '@/components/sign_up.vue'
 //MyPage
 import MyPage from '@/mypage/index.vue'
 import MyPageEdit from '@/mypage/edit.vue'
@@ -27,14 +25,6 @@ export default new Router({
     {
       path: '/',
       component: MyPage
-    },
-    {
-      path: '/login',
-      component: Login
-    },
-    {
-      path: '/sinup',
-      component: SignUp
     },
     {
       path: '/mypage',
@@ -79,11 +69,11 @@ export default new Router({
     },
 
     {
-      path: '/test/signup',
+      path: '/signup',
       component: SignupTest
     },
     {
-      path: '/test/login',
+      path: '/login',
       component: LoginTest
     },
     {

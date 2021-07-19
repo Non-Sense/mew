@@ -47,7 +47,7 @@ export default {
             break;
           case 403:
             // アクセス拒否: ログインし直してもらう
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 500:
             // サーバ内部エラー

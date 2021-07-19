@@ -10,8 +10,8 @@
       <li><router-link to="/online">Online</router-link></li>
       <li><router-link :to="{name: 'online-index',params: { id: '1' }}">OnlineIndex</router-link></li>
 
-      <li><router-link to="/test/signup">Signup *TEST*</router-link></li>
-      <li><router-link to="/test/login">Login *TEST*</router-link></li>
+      <li><router-link to="/signup">Signup *TEST*</router-link></li>
+      <li><router-link to="/login">Login *TEST*</router-link></li>
       <li><router-link to="/test/book">Book *TEST*</router-link></li>
     </ul>
   </header>

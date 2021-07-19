@@ -91,7 +91,7 @@ export default {
             // リクエストが不正
             break;
           case 403:
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 404:
             this.showFlag=false;
@@ -125,7 +125,7 @@ export default {
             // リクエストが不正
             break;
           case 403:
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 404:
             // 閲覧できない単語帳・そもそも無い
@@ -158,7 +158,7 @@ export default {
             // リクエストが不正
             break;
           case 403:
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 404:
             // 閲覧できない単語帳・そもそも無い
@@ -191,7 +191,7 @@ export default {
             // リクエストが不正
             break;
           case 403:
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 404:
             this.showFlag=true;
@@ -228,7 +228,7 @@ export default {
             // リクエストが不正
             break;
           case 403:
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 404:
             // 閲覧できない単語帳・そもそも無い
@@ -267,7 +267,7 @@ export default {
             // リクエストが不正
             break;
           case 403:
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 404:
             // 閲覧できない単語帳・そもそも無い
@@ -313,7 +313,7 @@ export default {
             // リクエストが不正
             break;
           case 403:
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 404:
             this.showFlag=false;
