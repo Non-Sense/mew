@@ -6,13 +6,16 @@
         <div class="button">
             <ul>
                 <li>
-                    <router-link to="/mypage" router-link-active exact-active-class="class–¼">
+                    <router-link to="/mypage" router-link-active exact-active-class="active-mypage" class="mypage">
                         <a>MyPage</a>
                     </router-link>
-                    <button   button type="button" onclick="location.href='#'" class="mypage">MyPage</button>
+                    <!-- <button   button type="button" onclick="location.href='#'" class="mypage">MyPage</button> -->
                 </li>
                 <li>
-                    <button type="button" onclick="location.href='#'" class="online">Online</button>
+                    <router-link to="/online" router-link-active exact-active-class="active-online" class="online">
+                        <a>OnLine</a>
+                    </router-link>
+                    <!-- <button type="button" onclick="location.href='#'" class="online">Online</button> -->
                 </li>
             </ul>
     </div>
@@ -52,7 +55,8 @@
     color: white;
     background-color: rgb(144, 143, 228);
     border-style: none;
-    text-decoration: underline;
+    text-decoration: none;
+    
 }
 
 .online {
@@ -60,5 +64,21 @@
     color: white;
     background-color: rgb(144, 143, 228);
     border-style: none;
+    text-decoration: none;
 }
+
+
+
+.active-mypage {
+    text-decoration: underline;
+}
+
+.active-online {
+    text-decoration: underline;
+}
+
+/* li.router-link-active,
+li.router-link-exact-active {
+    text-decoration: underline;
+ } */
 </style>
