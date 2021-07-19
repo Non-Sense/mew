@@ -1,15 +1,13 @@
 <template>
 <div class="tomita_mibody">
 
-  <!-- <form action="#"> -->
-    <div>
+  <div>
     <div class="tomita_mitop">
       <p>{{bookname}}
       <input type="search" name="search" v-model="search" v-on:change="findWord" placeholder="Search" class="tomita_misearch">
       <router-link :to="{ name: 'mypage-index-new_post', params: { id:id }}"><input type="button" name="new_post" value="New Post" class="tomita_new_post"></router-link>
       </p>
     </div>
-  <!-- </form> -->
   </div>
 
   <div v-for="item in items" v-bind:key="item.wordId" v-show="showFlag">
@@ -48,7 +46,7 @@ export default {
       items:[{wordId:"",bookId:"",word:"",mean:"",userId:"",createdAt:"",updatedAt:""}],
       editId:0, 
       bookname:"",
-      showFlag:true
+      showFlag:false
     }
   },
   // ロード終了時に取得してくる?
@@ -82,7 +80,7 @@ export default {
             this.$router.push("/login");
             break;
           case 404:
-            this.showFlag=true;
+            this.showFlag=false;
             // 閲覧できない単語・そもそも無い
             break;
           case 500:
@@ -95,9 +93,12 @@ export default {
     },
     // 単語帳IDを指定して単語を検索
     findWord(){
-      // 単語と意味それぞれで検索できますが、とりあえず同じ値とかを入れておけばいいんじゃないんでしょうか
-      let searchWord = this.search;  // <- TODO
-      let searchMean = this.search;  // <- TODO
+      if(this.search===""){
+        this.getWords();
+        return;
+      }
+      let searchWord = this.search;
+      let searchMean = this.search;
       let bookId = getParam();
       if(bookId == null) {
         // パラメータが設定されていない
@@ -114,7 +115,6 @@ export default {
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         this.items=res.data;
         this.showFlag=true;
-        console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
           case 400:
@@ -148,7 +148,6 @@ export default {
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         this.bookname=res.data.title;
-        console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
           case 400:
@@ -158,7 +157,6 @@ export default {
             this.$router.push("/login");
             break;
           case 404:
-            this.showFlag=true;
             // 閲覧できない単語・そもそも無い
             break;
           case 500:
