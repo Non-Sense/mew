@@ -31,7 +31,7 @@ export default new Router({
       component: MyPage
     },
     {
-      path: '/mypage/edit?id=:id',
+      path: '/mypage/edit/:id',
       component: MyPageEdit,
       props: true,
       name: "mypage-edit"
@@ -41,19 +41,19 @@ export default new Router({
       component: MyPageNewPost,
     },
     {
-      path: '/mypage/index?id=:id',
+      path: '/mypage/index/:id',
       component: MyPageIndex,
       props: true,
       name: "mypage-index"
     },
     {
-      path: '/mypage/index/edit?id=:id',
+      path: '/mypage/index/edit/:id',
       component: MyPageIndexEdit,
       props: true,
       name: "mypage-index-edit"
     },
     {
-      path: '/mypage/index/new_post?id=:id',
+      path: '/mypage/index/new_post/:id',
       component: MyPageIndexNewPost,
       props: true,
       name: "mypage-index-new_post"
@@ -62,7 +62,7 @@ export default new Router({
       path: '/online',
       component: Online
     },    {
-      path: '/online/index?id=:id',
+      path: '/online/index/:id',
       component: OnlineIndex,
       props: true,
       name: "online-index"

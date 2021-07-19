@@ -32,32 +32,29 @@
 import axios from "axios";
 import config from "@/const.js"
 
-function getParam(){
-  let params = new URLSearchParams(document.location.search.substring(1));
-  return params.get("id");
-}
 
 export default {
   name: "edit_word",
   data() {
     return {
-      id:getParam(),
+      id:0,
       search:"",
       items:[{wordId:"",bookId:"",word:"",mean:"",userId:"",createdAt:"",updatedAt:""}],
       editId:0, 
       bookname:"",
-      showFlag:false
+      showFlag:false,
     }
   },
-  // ロード終了時に取得してくる?
+  // ロード終了時に取得してくる
   created: function (){
+    this.id = this.$route.params.id;
     this.getWords();
     this.getBook();
   },
   methods: {
     // 単語帳IDで単語一覧を取得
     getWords(){
-      let bookId = getParam();
+      let bookId = this.id;
       if(bookId == null) {
         // パラメータが設定されていない
         console.error("getParam: id == null");
@@ -99,7 +96,7 @@ export default {
       }
       let searchWord = this.search;
       let searchMean = this.search;
-      let bookId = getParam();
+      let bookId = this.id;
       if(bookId == null) {
         // パラメータが設定されていない
         console.error("getParam: id == null");
@@ -136,7 +133,7 @@ export default {
       })
     },
     getBook(){
-      let bookId = getParam();
+      let bookId = this.id;
       if(bookId == null) {
         // パラメータが設定されていない
         console.error("getParam: id == null");
@@ -157,7 +154,8 @@ export default {
             this.$router.push("/login");
             break;
           case 404:
-            // 閲覧できない単語・そもそも無い
+            // 閲覧できない単語帳・そもそも無い
+            this.$router.push("/mypage");
             break;
           case 500:
             // サーバ内部エラー

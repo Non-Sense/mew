@@ -1,8 +1,8 @@
 <template>
   <div class="hashimoto-main">     
-    <form @submit="addBook" action="#">
-      <div class="hashimoto-button" v-on:click="addBook">
-        <input  class="hashimoto-save" type="submit" value="Save">
+    <form @submit.prevent="addBook" action="#!">
+      <div class="hashimoto-button">
+        <input class="hashimoto-save" type="submit" value="Save">
       </div>
       <div class="hashimoto-page-name">New Post</div>
       
@@ -31,14 +31,14 @@ export default {
     // 単語帳の作成
     addBook(){
       axios.post(config.baseUrl+"/api/book", {
-        title: this.wordBook,      // <- TODO
-        public: this.share   // <- TODO
+        title: this.wordBook,
+        public: this.share
       },
       {headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName) }
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         if(res.status===200) {
-          console.log("OK") // <- TODO: 成功したのでリダイレクトするなりなんなり
+          this.$router.back();
         }
       }).catch((error)=>{
         switch (error.response.status){

@@ -1,9 +1,9 @@
 <template>
   <div class="hashimoto-main">     
-    <form @submit="updateWord" action="#">
+    <form @submit.prevent="updateWord" action="#!">
       <div class="hashimoto-button">
-        <input class="hashimoto-delete" type="submit" value="Delete" v-on:click="deleteWord">
-        <input class="hashimoto-save" type="submit" value="Save" v-on:click="updateWord">
+        <input class="hashimoto-delete" type="button" value="Delete" v-on:click="deleteWord">
+        <input class="hashimoto-save" type="submit" value="Save">
       </div>
       <div class="hashimoto-page-name">Edit</div>
       
@@ -19,15 +19,11 @@
 import axios from "axios";
 import config from "@/const.js"
 
-function getParam(){
-  let params = new URLSearchParams(document.location.search.substring(1));
-  return params.get("id");
-}
-
 export default {
   name: "edit_word",
   data() {
     return {
+      id: 0,
       word: "",
       meaning: ""
     }
@@ -35,12 +31,13 @@ export default {
 
   // 読み込み時にinputに値が反映されてるほうが良さそう
   created: function (){
+    this.id = this.$route.params.id;
     this.getWord();
   },
   methods: {
     // 単語IDで単語取得
     getWord(){
-      let wordId = getParam();
+      let wordId = this.id;
       if(wordId == null) {
         // パラメータが設定されていない
         console.error("getParam: id == null");
@@ -53,8 +50,6 @@ export default {
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         this.word = res.data.word;
         this.meaning = res.data.mean;
-
-        console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
           case 400:
@@ -65,6 +60,7 @@ export default {
             break;
           case 404:
             // 閲覧できない単語・そもそも無い
+            this.$router.push("/mypage");
             break;
           case 500:
             // サーバ内部エラー
@@ -76,14 +72,14 @@ export default {
     },
     // 単語の内容更新
     updateWord(){
-      let wordId = getParam();
+      let wordId = this.id;
       if(wordId == null) {
         console.error("getParam: id == null");
         return;
       }
       axios.put(config.baseUrl+"/api/word/"+wordId, {
-            word: this.word,   // <- TODO
-            mean: this.meaning    // <- TODO
+            word: this.word,
+            mean: this.meaning
           },
           {
             headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
@@ -91,7 +87,7 @@ export default {
       ).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         if(res.status===200) {
-          console.log("OK") // <- TODO
+          this.$router.back();
         }
       }).catch((error)=>{
         switch (error.response.status){
@@ -103,6 +99,7 @@ export default {
             break;
           case 404:
             // 自分の単語ではない・そもそも無い
+            this.$router.push("/mypage");
             break;
           case 500:
             // サーバ内部エラー
@@ -114,7 +111,7 @@ export default {
     },
     // 単語帳の削除
     deleteWord(){
-      let wordId = getParam();
+      let wordId = this.id;
       if(wordId == null) {
         console.error("getParam: id == null");
         return;
@@ -125,7 +122,7 @@ export default {
       ).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         if(res.status===200) {
-          console.log("OK")   // <- TODO
+          this.$router.back();
         }
       }).catch((error)=>{
         switch (error.response.status){
@@ -137,6 +134,7 @@ export default {
             break;
           case 404:
             // 自分の単語ではない・そもそも無い
+            this.$router.push("/mypage");
             break;
           case 500:
             // サーバ内部エラー
