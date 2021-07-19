@@ -33,15 +33,21 @@
 
   <div v-for="item in items" v-bind:key="item.wordId" v-show="showFlag">
     <div class="tomita_miword_list">
-      <table>
-        <tr>
-          <td class="tomita_miword">{{item.word}}</td>
-          <td class="tomita_mimeaning">{{item.mean}}</td>
-        </tr>
-      </table>
+        <table>
+          <tr>
+            <td class="tomita_oiword">{{item.word}}</td>
+            <td class="tomita_oimeaning">{{item.mean}}</td>
+          </tr>
+        </table>
     </div>
   </div>
+  <div v-for="item in comments" v-bind:key="item.commentId">
+  コメント:{{item.comment}}
 </div>
+</div>
+
+
+
 </template>
 <script>
 import axios from "axios";
@@ -59,8 +65,11 @@ export default {
       modalFlag: false,
       search:"",
       bookname:"",
+      point:"",
+      text:"",
       showFlag:true,
-      items:[{wordId:"",bookId:"",word:"",mean:"",userId:"",createdAt:"",updatedAt:""}]
+      items:[{wordId:"",bookId:"",word:"",mean:"",userId:"",createdAt:"",updatedAt:""}],
+      comments:[{commentId:"",bookId:"",userId:"",comment:"",createdAt:""}]
     }
   },
   created: function () {
@@ -150,7 +159,7 @@ export default {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-        this.items=res.data;
+        this.comments=res.data;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
@@ -214,7 +223,7 @@ export default {
         return;
       }
       axios.post(config.baseUrl+"/api/book/"+bookId+"/rate", {
-        rate: 1 // <- TODO
+        rate:this.point // <- TODO
       }, {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
@@ -253,7 +262,7 @@ export default {
         return;
       }
       axios.post(config.baseUrl+"/api/book/"+bookId+"/comment", {
-        comment: "" // <- TODO
+        comment:this.text // <- TODO
       }, {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
