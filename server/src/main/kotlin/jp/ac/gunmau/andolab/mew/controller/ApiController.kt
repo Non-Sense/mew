@@ -382,14 +382,14 @@ class ApiController @Autowired constructor(
 
     @GetMapping("/comment")
     fun getComment(@RequestParam(name="bookid", required = false) bookId:Int?,
-                   @RequestParam(name="userId", required = false) userId:Int?):ResponseEntity<List<Comment>>{
+                   @RequestParam(name="userId", required = false) userId:Int?):ResponseEntity<List<CommentAndUserName>>{
         bookId?:userId?:return ResponseEntity(listOf(),HttpStatus.BAD_REQUEST)
         if(bookId!=null)
             return responseEntityUtil(commentService.selectByBookId(bookId))
         return responseEntityUtil(commentService.selectByUserId(userId!!))
     }
     @GetMapping("/book/{id}/comment")
-    fun getBookComment(@PathVariable(name="id") bookId: Int): ResponseEntity<List<Comment>>{
+    fun getBookComment(@PathVariable(name="id") bookId: Int): ResponseEntity<List<CommentAndUserName>>{
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
         val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
         if(b.public!=true && b.userId!=userId)
@@ -455,6 +455,12 @@ class ApiController @Autowired constructor(
             m["avg"] = it
         }
         return ResponseEntity.ok(m)
+    }
+
+    @GetMapping("/book/{id}/myrate")
+    fun getMyBookRate(@PathVariable(name = "id")bookId: Int): ResponseEntity<Rate>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        return responseEntityUtil(rateService.selectWithBookIdAndUserId(bookId,userId))
     }
 
     @GetMapping("/rates")
