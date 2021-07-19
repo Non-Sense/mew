@@ -311,7 +311,7 @@ class ApiController @Autowired constructor(
                        @RequestParam(name="mean",required = false) mean: String?): ResponseEntity<List<Word>>{
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
         val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
-        if(b.public!=true || b.userId != userId)
+        if(b.public!=true && b.userId != userId)
             return ResponseEntity(HttpStatus.NOT_FOUND)
         word?:mean?:return responseEntityUtil(wordService.selectByBookId(bookId))
         if(word!=null&&mean!=null){
@@ -392,7 +392,7 @@ class ApiController @Autowired constructor(
     fun getBookComment(@PathVariable(name="id") bookId: Int): ResponseEntity<List<Comment>>{
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
         val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
-        if(b.public!=true || b.userId!=userId)
+        if(b.public!=true && b.userId!=userId)
             return ResponseEntity(HttpStatus.NOT_FOUND)
         return responseEntityUtil(commentService.selectByBookId(bookId))
     }
@@ -402,7 +402,8 @@ class ApiController @Autowired constructor(
                     @RequestBody comment: Comment):ResponseEntity<String>{
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
         val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
-        if(b.public!=true || b.userId!=userId)
+        Logger.getLogger("TEST").info("$userId  $bookId  $b $comment")
+        if(b.public!=true && b.userId!=userId)
             return ResponseEntity(HttpStatus.NOT_FOUND)
         comment.bookId = bookId
         comment.userId = userId
@@ -422,7 +423,7 @@ class ApiController @Autowired constructor(
         rate.bookId?:return ResponseEntity(HttpStatus.BAD_REQUEST)
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
         val b = bookService.selectById(rate.bookId!!)?:return ResponseEntity(HttpStatus.NOT_FOUND)
-        if(b.public!=true||b.userId!=userId)
+        if(b.public!=true && b.userId!=userId)
             return ResponseEntity(HttpStatus.NOT_FOUND)
         rate.userId = userId
         try{
@@ -471,7 +472,7 @@ class ApiController @Autowired constructor(
         try{
             rateService.insert(rate)
         } catch (e: DuplicateKeyException){
-            return ResponseEntity(null, HttpStatus.CONFLICT)
+            rateService.updateRate(bookId,userId,rate.rate)
         } catch (e: DataIntegrityViolationException){
             return ResponseEntity(null,HttpStatus.BAD_REQUEST)
         }
