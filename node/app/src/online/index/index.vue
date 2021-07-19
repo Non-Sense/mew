@@ -7,40 +7,39 @@
             Review
           </div>
           <div class="tomita_evaluation">
-            <input type="number" name="point" value="point" class="tomita_point" min="0" max="5">
+            <input type="number" name="point" value="point" class="tomita_point" min="0" max="5" v-model="point">
               <div class="tomita_five_point">
                 / 5.0点
               </div>
           <div>
-          <input type="text" class="review_comment" placeholder="コメント">
-          <input type="submit" name="submit" value="送信" class="tomita_submit review_submit">
+          <input type="text" class="review_comment" placeholder="コメント" v-model="text">
+          <input type="submit" name="submit" value="送信" class="tomita_submit review_submit" v-on:click="postReview">
         </div>
       </div>
     </div>
   </div>
 
-  <form action="" method="post">
+  <!-- <form action="#" @submit="findWord"> -->
+    <div>
     <div class="tomita_oitop">
-      <p>数学単語帳
-      <input type="search" name="search" placeholder="Search" class="tomita_oisearch">
+      <p>{{bookname}}
+      <input type="search" name="search" v-model="search" v-on:change="findWord" placeholder="Search" class="tomita_oisearch">
       <input type="button" name="Review" value="Review" class="tomita_oiReview" v-on:click="modal">
       </p>
 
     </div>
-  </form>
-
-  <div class="tomita_oiword_list">
-    <table>
-      <td class="tomita_oiword">math</td>
-      <td class="tomita_oimeaning">数学</td>
-    </table>
+  <!-- </form> -->
   </div>
 
-  <div class="tomita_oiword_list">
-    <table>
-      <td class="tomita_oiword">用語</td>
-      <td class="tomita_oimeaning">意味</td>
-    </table>
+  <div v-for="item in items" v-bind:key="item.wordId" v-show="showFlag">
+    <div class="tomita_miword_list">
+      <table>
+        <tr>
+          <td class="tomita_miword">{{item.word}}</td>
+          <td class="tomita_mimeaning">{{item.mean}}</td>
+        </tr>
+      </table>
+    </div>
   </div>
 </div>
 </template>
@@ -58,12 +57,17 @@ export default {
   data() {
     return {
       modalFlag: false,
+      search:"",
+      bookname:"",
+      showFlag:true,
+      items:[{wordId:"",bookId:"",word:"",mean:"",userId:"",createdAt:"",updatedAt:""}]
     }
   },
   created: function () {
     this.getRate();
     this.getWord();
     this.getComment();
+    this.getBook();
   },
   methods: {
     // 単語帳IDで単語一覧取得
@@ -78,7 +82,8 @@ export default {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items=res.data;
+        this.showFlag=true;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
@@ -89,6 +94,7 @@ export default {
             this.$router.push("/test/login"); // <- TODO
             break;
           case 404:
+            this.showFlag=false;
             // 閲覧できない単語帳・そもそも無い
             break;
           case 500:
@@ -111,7 +117,7 @@ export default {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items=res.data;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
@@ -144,7 +150,7 @@ export default {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items=res.data;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
@@ -156,6 +162,40 @@ export default {
             break;
           case 404:
             // 閲覧できない単語帳・そもそも無い
+            break;
+          case 500:
+            // サーバ内部エラー
+            break;
+          default:
+            // 多分サーバが死んでいる
+        }
+      })
+    },
+    getBook(){
+      let bookId = getParam();
+      if(bookId == null) {
+        // パラメータが設定されていない
+        console.error("getParam: id == null");
+        return;
+      }
+      axios.get(config.baseUrl+"/api/book/"+bookId, {
+        headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)
+        }
+      }).then((res)=>{
+        this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
+        this.bookname=res.data.title;
+        console.log(res.data);  // <- TODO
+      }).catch((error)=>{
+        switch (error.response.status){
+          case 400:
+            // リクエストが不正
+            break;
+          case 403:
+            this.$router.push("/test/login"); // <- TODO
+            break;
+          case 404:
+            this.showFlag=true;
+            // 閲覧できない単語・そもそも無い
             break;
           case 500:
             // サーバ内部エラー
@@ -240,10 +280,16 @@ export default {
         }
       })
     },
+
+    postReview(){
+      this.postRate();
+      this.postComment();
+    },
+
     // 単語帳IDを指定して単語を検索
     findWord(){
-      let searchWord = "test";  // <- TODO
-      let searchMean = "test";  // <- TODO
+      let searchWord = this.search;  // <- TODO
+      let searchMean = this.search;  // <- TODO
       let bookId = getParam();
       if(bookId == null) {
         // パラメータが設定されていない
@@ -258,7 +304,8 @@ export default {
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
       }).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
-
+        this.items=res.data;
+        this.showFlag=true;
         console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
@@ -269,6 +316,7 @@ export default {
             this.$router.push("/test/login"); // <- TODO
             break;
           case 404:
+            this.showFlag=false;
             // ヒット数が0・そもそも単語帳が無い・見れない単語帳
             break;
           case 500:
