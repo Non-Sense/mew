@@ -1,6 +1,6 @@
 <template>
   <div class="hashimoto-main">     
-    <form @submit="updateBook" action="#">
+    <form @submit.prevent="updateBook">
       <div class="hashimoto-button">
         <input class="hashimoto-delete" type="submit" value="Delete" v-on:click="deleteBook">
         <input class="hashimoto-save" type="submit" value="Save" v-on:click="updateBook">
@@ -53,7 +53,6 @@ export default {
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         this.wordBook = res.data.title;
         this.share = res.data.public;
-        console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
           case 400:
@@ -81,8 +80,8 @@ export default {
         return;
       }
       axios.put(config.baseUrl+"/api/book/"+bookId, {
-            title: this.wordBook,      // <- TODO
-            public: this.share   // <- TODO
+            title: this.wordBook,
+            public: this.share
           },
           {
             headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
@@ -90,7 +89,7 @@ export default {
       ).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         if(res.status===200) {
-          console.log("OK") // <- TODO
+          this.$router.push("/mypage");
         }
       }).catch((error)=>{
         switch (error.response.status){
@@ -124,7 +123,7 @@ export default {
       ).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         if(res.status===200) {
-          console.log("OK")   // <- TODO
+          this.$router.push("/mypage");
         }
       }).catch((error)=>{
         switch (error.response.status){
