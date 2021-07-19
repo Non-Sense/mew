@@ -31,4 +31,7 @@ interface RateMapper {
 
     @Update("UPDATE rate SET rate=#{rate} WHERE rate_id = #{rateId}")
     fun updateRate(id: Int, rate: Int): Boolean
+
+    @Update("UPDATE rate SET rate=#{rate} WHERE book_id = #{bookId} AND user_id = #{userId}")
+    fun updateRateWithBookIdAndUserId(bookId: Int, userId: Int, rate: Int): Boolean
 }

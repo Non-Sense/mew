@@ -31,6 +31,10 @@ class RateService @Autowired constructor(private val dao: RateMapper){
         return dao.updateRate(rateId, rate)
     }
 
+    fun updateRate(bookId: Int, userId: Int, rate:Int): Boolean{
+        return dao.updateRateWithBookIdAndUserId(bookId, userId, rate)
+    }
+
     fun getAverage(bookId: Int): Double?{
         return dao.selectAvgRate(bookId)
     }

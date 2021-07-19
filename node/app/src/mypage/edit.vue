@@ -8,7 +8,7 @@
       <div class="hashimoto-page-name">Edit</div>
       
       <div class="hashimoto-edit-form">
-        <div class="hashimoto-box">単語帳名 <input v-model="wordBook" class="hashimoto-word-book" type="text" name="word-book" id="word-book"></div>
+        <div class="hashimoto-box">単語帳名 <input v-model="wordBook" class="hashimoto-word-book" type="text" name="word-book" id="word-book" required></div>
         <p>share<input v-model="share" class="hashimoto-share" type="checkbox" name="share" id="share"></p>
       </div>
     </form>

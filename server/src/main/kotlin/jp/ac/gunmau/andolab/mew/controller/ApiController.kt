@@ -311,7 +311,7 @@ class ApiController @Autowired constructor(
                        @RequestParam(name="mean",required = false) mean: String?): ResponseEntity<List<Word>>{
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
         val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
-        if(b.public!=true || b.userId != userId)
+        if(b.public!=true && b.userId != userId)
             return ResponseEntity(HttpStatus.NOT_FOUND)
         word?:mean?:return responseEntityUtil(wordService.selectByBookId(bookId))
         if(word!=null&&mean!=null){
@@ -382,17 +382,17 @@ class ApiController @Autowired constructor(
 
     @GetMapping("/comment")
     fun getComment(@RequestParam(name="bookid", required = false) bookId:Int?,
-                   @RequestParam(name="userId", required = false) userId:Int?):ResponseEntity<List<Comment>>{
+                   @RequestParam(name="userId", required = false) userId:Int?):ResponseEntity<List<CommentAndUserName>>{
         bookId?:userId?:return ResponseEntity(listOf(),HttpStatus.BAD_REQUEST)
         if(bookId!=null)
             return responseEntityUtil(commentService.selectByBookId(bookId))
         return responseEntityUtil(commentService.selectByUserId(userId!!))
     }
     @GetMapping("/book/{id}/comment")
-    fun getBookComment(@PathVariable(name="id") bookId: Int): ResponseEntity<List<Comment>>{
+    fun getBookComment(@PathVariable(name="id") bookId: Int): ResponseEntity<List<CommentAndUserName>>{
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
         val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
-        if(b.public!=true || b.userId!=userId)
+        if(b.public!=true && b.userId!=userId)
             return ResponseEntity(HttpStatus.NOT_FOUND)
         return responseEntityUtil(commentService.selectByBookId(bookId))
     }
@@ -402,7 +402,7 @@ class ApiController @Autowired constructor(
                     @RequestBody comment: Comment):ResponseEntity<String>{
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
         val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
-        if(b.public!=true || b.userId!=userId)
+        if(b.public!=true && b.userId!=userId)
             return ResponseEntity(HttpStatus.NOT_FOUND)
         comment.bookId = bookId
         comment.userId = userId
@@ -422,7 +422,7 @@ class ApiController @Autowired constructor(
         rate.bookId?:return ResponseEntity(HttpStatus.BAD_REQUEST)
         val userId = getUserId(SecurityContextHolder.getContext().authentication)
         val b = bookService.selectById(rate.bookId!!)?:return ResponseEntity(HttpStatus.NOT_FOUND)
-        if(b.public!=true||b.userId!=userId)
+        if(b.public!=true && b.userId!=userId)
             return ResponseEntity(HttpStatus.NOT_FOUND)
         rate.userId = userId
         try{
@@ -457,6 +457,12 @@ class ApiController @Autowired constructor(
         return ResponseEntity.ok(m)
     }
 
+    @GetMapping("/book/{id}/myrate")
+    fun getMyBookRate(@PathVariable(name = "id")bookId: Int): ResponseEntity<Rate>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        return responseEntityUtil(rateService.selectWithBookIdAndUserId(bookId,userId))
+    }
+
     @GetMapping("/rates")
     fun getAllRate(): ResponseEntity<List<Rate>>{
         return ResponseEntity.ok(rateService.selectAll())
@@ -471,7 +477,7 @@ class ApiController @Autowired constructor(
         try{
             rateService.insert(rate)
         } catch (e: DuplicateKeyException){
-            return ResponseEntity(null, HttpStatus.CONFLICT)
+            rateService.updateRate(bookId,userId,rate.rate)
         } catch (e: DataIntegrityViolationException){
             return ResponseEntity(null,HttpStatus.BAD_REQUEST)
         }

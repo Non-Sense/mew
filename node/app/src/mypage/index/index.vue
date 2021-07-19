@@ -67,7 +67,6 @@ export default {
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         this.items=res.data;
         this.showFlag=true;
-        console.log(res.data);  // <- TODO
       }).catch((error)=>{
         switch (error.response.status){
           case 400:

@@ -59,11 +59,9 @@ export default {
         this.items = res.data;
         this.sharingItems = res.data.filter((e)=>{return e.public});
         this.showFlag = true;
-        console.log(res.data);
       }).catch((error)=>{
         this.msg = "error: "+error.response.status;
         if(error.response.status === 403){
-          // TODO: トークンが切れたのでもう一度ログインしてもらう
           this.$router.push("/login");
         }
       })
@@ -75,7 +73,7 @@ export default {
     findMyBooks(){
       axios.get(config.baseUrl+"/api/book/find",{
         params:{
-          title:this.search, // <- TODO: 検索文字列を入れる
+          title:this.search,
           own:1
         },
         headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
@@ -84,7 +82,6 @@ export default {
         this.items = res.data;
         this.sharingItems = res.data.filter((e)=>{return e.public});
         this.showFlag=true;
-        console.log(res.data); // <- TODO: 良きように
       }).catch((error)=>{
         switch (error.response.status){
           case 400:
