@@ -1,14 +1,14 @@
 <template>
   <div class="hashimoto-main">     
-      <form @submit="addWord" action="#">
-        <div class="hashimoto-button" value="Save" v-on:click="addWord">
-          <input class="hashimoto-save" type="submit">
+      <form @submit.prevent="addWord" >
+        <div class="hashimoto-button">
+          <input class="hashimoto-save" type="submit" value="Save">
         </div>
         <div class="hashimoto-page-name">New Post</div>
         
         <div class="hashimoto-post-word">
-          <p class="hashimoto-p">用語 <input v-model="word" class="hashimoto-word" type="text" name="word" id="word"></p>
-          <p class="hashimoto-p">意味 <input v-model="meaning" class="hashimoto-meaning" type="text" name="meaning" id="meaning" ></p>
+          <p class="hashimoto-p">用語 <input v-model="word" class="hashimoto-word" type="text" name="word" id="word" required></p>
+          <p class="hashimoto-p">意味 <input v-model="meaning" class="hashimoto-meaning" type="text" name="meaning" id="meaning" required></p>
         </div>
       </form>
 
@@ -37,14 +37,17 @@ export default {
   methods: {
     // 単語の内容更新
     addWord(){
+      // 空文字列を登録しない
+      if(this.word==="" && this.meaning==="")
+        return;
       let bookId = getParam();
       if(bookId == null) {
         console.error("getParam: id == null");
         return;
       }
       axios.post(config.baseUrl+"/api/book/"+bookId+"/word", {
-            word: this.word,   // <- TODO
-            mean: this.meaning   // <- TODO
+            word: this.word,
+            mean: this.meaning
           },
           {
             headers: {"X-AUTH-TOKEN": this.$cookies.get(config.cookieName)}
@@ -52,7 +55,8 @@ export default {
       ).then((res)=>{
         this.$cookies.set(config.cookieName, res.headers["x-auth-token"]);
         if(res.status===200) {
-          console.log("OK") // <- TODO
+          // 単語帳に戻る
+          this.$router.push({name:'mypage-index',params:{ id: bookId }});
         }
       }).catch((error)=>{
         switch (error.response.status){
@@ -60,7 +64,7 @@ export default {
             // リクエストが不正
             break;
           case 403:
-            this.$router.push("/test/login"); // <- TODO
+            this.$router.push("/login");
             break;
           case 404:
             // 自分の単語帳ではない・そもそも無い

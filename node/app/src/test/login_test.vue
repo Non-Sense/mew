@@ -13,7 +13,7 @@
 
       <button type="submit" value="submit" class="login login_button">ログイン</button>
     </form>
-    <a href=" ../test/signup" class="login_a"><button class="login login_button longin_a">新規登録</button></a>
+    <a href=" ../signup" class="login_a"><button class="login login_button longin_a">新規登録</button></a>
     
   <span v-cloak>{{ msg }}</span>
   </div>
