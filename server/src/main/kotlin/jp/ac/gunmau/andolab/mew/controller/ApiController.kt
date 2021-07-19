@@ -315,7 +315,7 @@ class ApiController @Autowired constructor(
             return ResponseEntity(HttpStatus.NOT_FOUND)
         word?:mean?:return responseEntityUtil(wordService.selectByBookId(bookId))
         if(word!=null&&mean!=null){
-            return responseEntityUtil(wordService.find(bookId,word,mean))
+            return responseEntityUtil(wordService.find(bookId,patternUtil(word),patternUtil(mean)))
         }
         if(word!=null){
             return responseEntityUtil(wordService.findByWord(patternUtil(word)))
