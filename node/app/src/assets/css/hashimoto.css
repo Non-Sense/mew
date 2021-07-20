@@ -23,7 +23,7 @@
 }
 
 .hashimoto-save{
-  background-color: #8e82ff;
+  background-color: rgb(144, 143, 228)!important;
   color: #ffff;
   width: 185px;
   height: 65px;
@@ -33,7 +33,10 @@
   margin-left: 20px;
   margin-right: 20px;
   
+}
 
+.hashimoto-save:hover{
+  opacity: 0.8;
 }
 
 .hashimoto-page-name{

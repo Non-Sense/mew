@@ -1,7 +1,7 @@
 /* online_index */
 .tomita_oiheader p{
     margin: 0px;
-    background-color:  #7B89C9;
+    background-color:  rgb(144, 143, 228);
     padding-bottom: 35px;
     padding-top: 35px;
     padding-left: 20px;
@@ -41,7 +41,7 @@
 .tomita_oiReview{
     font-family: Roboto;
     font-style: normal;
-    background-color: #7B89C9;
+    background-color: rgb(144, 143, 228);
     color:white;
     border: none;
     font-size: 24px;
@@ -92,7 +92,7 @@
 
 .tomita_miheader p{
     margin: 0px;
-    background-color: #7B89C9;
+    background-color: rgb(144, 143, 228);
     padding-bottom: 35px;
     padding-top: 35px;
     padding-left: 20px;
@@ -135,7 +135,7 @@
 .tomita_new_post{
     font-family: Roboto;
     font-style: normal;
-    background-color: #7B89C9;
+    background-color: rgb(144, 143, 228);
     color:white;
     border: none;
     font-size: 24px;

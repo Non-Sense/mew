@@ -41,7 +41,7 @@
         </table>
     </div>
   </div>
-  <div>
+  <div class="comment">
     <table>
       <tr>
         <th>UserName</th>
@@ -397,7 +397,7 @@ export default {
     font-family: Roboto;
     font-style: normal;
     margin: 0px;
-    background-color:  #7B89C9;
+    background-color:  rgb(144, 143, 228);
     padding-bottom: 35px;
     padding-top: 35px;
     padding-left: 20px;
@@ -437,7 +437,7 @@ export default {
 .tomita_oirReview{
     font-family: Roboto;
     font-style: normal;
-    background-color: #7B89C9;
+    background-color: rgb(144, 143, 228);
     color:white;
     border: none;
     font-size: 24px;
@@ -455,7 +455,7 @@ export default {
 .tomita_submit{
     font-family: Roboto;
     font-style: normal;
-    background-color: #7B89C9;
+    background-color: rgb(144, 143, 228);
     color:white;
     border: none;
     width: 188px;
@@ -483,7 +483,7 @@ export default {
 }
 
 .tomita_review_window_content{
-    color: #7B89C9;
+    color: rgb(144, 143, 228);
     position: absolute;
     width: 846px;
     height: 508px;
@@ -589,5 +589,10 @@ export default {
   margin: 40px auto;
   width: 320px;
   height: 32px;
+}
+
+.comment {
+  padding: 80px 150px;
+  background-color: (255,255,255,0.8);
 }
 </style>

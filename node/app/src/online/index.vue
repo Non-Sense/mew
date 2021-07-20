@@ -1,20 +1,14 @@
 <template>
-  <div class="taisei_Obody">
-    <div class="taisei_list">
-      <ul>
-        <li>
-          <p>Online List</p>
-        </li>
-        <li>
-          <input v-model="search" v-on:change="findBooks" type="text" placeholder="    Search" />
-        </li>
-      </ul>
+  <div class="taisei_Mbody">
+    <div class="taisei_top">
+        <p>Online List</p>
+        <input v-model="search" v-on:change="findBooks" type="text" placeholder="    Search" />
     </div>
     
-    <div class="taisei_WB">
-      <p>並び替え:評価の高い順</p>
-      <ul v-for="item in sharingItems" v-bind:key="item.bookId" v-show="showFlag">
-        <li>
+    <div class="taisei_title">
+      <!-- <p>評価の高い順</p> -->
+      <ul>
+        <li v-for="item in sharingItems" v-bind:key="item.bookId" v-show="showFlag">
           <input type="button" @click="$router.push({name:'online-index',params:{ id: item.bookId }})" v-bind:value="item.title" />
           <button v-if="item.rate!=null">評価: {{item.rate}}</button>
           <button v-else>評価: 未評価</button>

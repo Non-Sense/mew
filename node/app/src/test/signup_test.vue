@@ -17,7 +17,7 @@
 
       <button type="submit" value="submit" class="login login_button">新規登録</button>
     </form>
-    <router-link to="/login"><button class="login login_button">ログイン</button></router-link>
+    <router-link to="/login"><button class="reg  login_button longin_a login_sub">ログイン</button></router-link>
     <span v-cloak>{{ msg }}</span>
   </div>
 </template>
@@ -89,3 +89,13 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .login_sub {
+    color: #666;
+  }
+
+  a {
+    text-decoration: none;
+  }
+</style>

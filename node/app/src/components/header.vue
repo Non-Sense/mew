@@ -17,6 +17,12 @@
                     </router-link>
                     <!-- <button type="button" onclick="location.href='#'" class="online">Online</button> -->
                 </li>
+                <li>
+                    <router-link to="/login" router-link-active exact-active-class="active-online" class="online">
+                        <a>ログイン</a>
+                    </router-link>
+                    <!-- <button type="button" onclick="location.href='#'" class="online">Online</button> -->
+                </li>
             </ul>
     </div>
 </div>
