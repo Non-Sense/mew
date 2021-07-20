@@ -28,3 +28,15 @@ services:
       - ./db/data:/var/lib/mysql
       - ./db/initdb.d:/docker-entrypoint-initdb.d
       - ./db/conf.d/:/etc/mysql/conf.d
+
+  node:
+    build: ./node
+    privileged: true
+    working_dir: /app
+    volumes:
+    - ./node/app:/app
+    tty: true
+    stdin_open: true
+    ports:
+    - 9000:9000
+    command: /bin/sh

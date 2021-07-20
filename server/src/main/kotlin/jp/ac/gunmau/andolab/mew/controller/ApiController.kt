@@ -7,8 +7,11 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
+import java.util.logging.Logger
 
 @RestController
 @RequestMapping("/api")
@@ -21,6 +24,10 @@ class ApiController @Autowired constructor(
 
     companion object{
         private val bcryptRegex = Regex("""^\$2[ayb]\$.{56}$""")
+    }
+
+    private fun getUserId(auth: Authentication): Int{
+        return (auth.principal as User).userId!!
     }
 
     @RequestMapping
@@ -137,6 +144,10 @@ class ApiController @Autowired constructor(
 
     @PostMapping("/book")
     fun postBook(@RequestBody book:Book): ResponseEntity<String>{
+        book.userId = getUserId(SecurityContextHolder.getContext().authentication)
+        if(book.public==null)
+            book.public = false
+        book.title?:return ResponseEntity(HttpStatus.BAD_REQUEST)
         try {
             bookService.insert(book)
         } catch (e: DuplicateKeyException){
@@ -148,18 +159,33 @@ class ApiController @Autowired constructor(
     }
 
     @GetMapping("/book")
-    fun getBook(@RequestParam(name="userid",required = true) userId:Int): ResponseEntity<List<Book>>{
-        return responseEntityUtil(bookService.selectByUserId(userId))
+    fun getBook(@RequestParam(name="userid",required = false) userId:Int?): ResponseEntity<List<Book>>{
+        val currentUserId = getUserId(SecurityContextHolder.getContext().authentication)
+        if(userId==null || currentUserId == userId){
+            return responseEntityUtil(bookService.selectByUserId(currentUserId))
+        }
+        return responseEntityUtil(bookService.selectPublicByUserId(userId))
     }
 
     @GetMapping("/book/{id}")
     fun getBookById(@PathVariable("id") id:Int): ResponseEntity<Book>{
-        return responseEntityUtil(bookService.selectById(id))
+        val currentUserId = getUserId(SecurityContextHolder.getContext().authentication)
+        return responseEntityUtil(bookService.selectById(id)?.let {
+            when{
+                // 自分の単語帳か公開状態の単語帳を取得できる
+                (it.public==true) -> it
+                (it.userId==currentUserId) -> it
+                else -> null
+            }
+        })
     }
 
     @GetMapping("/book/find")
-    fun findBook(@RequestParam(name="title",required = true) title:String): ResponseEntity<List<Book>>{
-        return responseEntityUtil(bookService.findByTitle(patternUtil(title)))
+    fun findBook(@RequestParam(name="title",required = true) title:String,
+                 @RequestParam(name="own", required = false) own: Int?): ResponseEntity<List<Book>>{
+        own?:return responseEntityUtil(bookService.findPublicByTitle(patternUtil(title)))
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        return responseEntityUtil(bookService.findByTitle(patternUtil(title),userId))
     }
 
     @GetMapping("/books")
@@ -167,9 +193,79 @@ class ApiController @Autowired constructor(
         return ResponseEntity.ok(bookService.selectAll())
     }
 
+    @PutMapping("/book/{id}")
+    fun updateBook(@PathVariable("id") id: Int,
+                   @RequestBody book: Book): ResponseEntity<String>{
+        val b = bookService.selectById(id)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        // 作成者以外編集できないことにする
+        if(b.userId != getUserId(SecurityContextHolder.getContext().authentication))
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(book.public!=null && book.title!=null){
+            if(bookService.update(id, book.title!!, book.public!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        if(book.public!=null){
+            if(bookService.updatePublic(id, book.public!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        if(book.title!=null){
+            if(bookService.updateTitle(id, book.title!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+    @DeleteMapping("/book/{id}")
+    fun deleteBook(@PathVariable("id") id:Int):ResponseEntity<String>{
+        val b = bookService.selectById(id)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.userId != getUserId(SecurityContextHolder.getContext().authentication))
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(bookService.delete(id))
+            return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+    @GetMapping("/book/public")
+    fun getPublicBooks(@RequestParam(name="title",required = false)title:String?):ResponseEntity<List<BookWithRate>>{
+        if(title==null || title=="")
+            return responseEntityUtil(bookService.selectBooksWithRate())
+        return responseEntityUtil(bookService.findBooksWithRate(patternUtil(title)))
+    }
+
 
     @PostMapping("/word")
     fun postWord(@RequestBody word:Word):ResponseEntity<String>{
+        if(word.word == null || word.mean == null || word.bookId == null)
+            return ResponseEntity(HttpStatus.BAD_REQUEST)
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val book = bookService.selectById(word.bookId!!)?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        // 自分が作成した単語帳じゃないと追加できない
+        if(userId!=book.userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        word.userId = userId
+        try {
+            wordService.insert(word)
+        } catch (e: DuplicateKeyException){
+            return ResponseEntity(null, HttpStatus.CONFLICT)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
+    }
+
+    @PostMapping("/book/{id}/word")
+    fun postWordOnBook(@PathVariable(name = "id")bookId: Int,
+                       @RequestBody word: Word): ResponseEntity<String>{
+        word.mean?:word.word?:return ResponseEntity(HttpStatus.BAD_REQUEST)
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val book = bookService.selectById(bookId)?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(userId!=book.userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        word.bookId = bookId
+        word.userId = userId
         try {
             wordService.insert(word)
         } catch (e: DuplicateKeyException){
@@ -189,6 +285,15 @@ class ApiController @Autowired constructor(
     fun getWord(@RequestParam(name="bookid", required = true) bookId:Int): ResponseEntity<List<Word>>{
         return responseEntityUtil(wordService.selectByBookId(bookId))
     }
+    @GetMapping("/book/{id}/word")
+    fun getBookWord(@PathVariable(name="id") bookId: Int): ResponseEntity<List<Word>>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.userId==userId || b.public==true)
+            return responseEntityUtil(wordService.selectByBookId(bookId))
+        return ResponseEntity(HttpStatus.NOT_FOUND)
+    }
+
 
     @GetMapping("/word/find")
     fun findWord(@RequestParam(name="word",required = false) word: String?,
@@ -200,13 +305,68 @@ class ApiController @Autowired constructor(
         return responseEntityUtil(wordService.findByMean(patternUtil(mean!!)))
     }
 
+    @GetMapping("/book/{id}/word/find")
+    fun findWordOnBook(@PathVariable(name="id")bookId: Int,
+                       @RequestParam(name="word",required = false) word: String?,
+                       @RequestParam(name="mean",required = false) mean: String?): ResponseEntity<List<Word>>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.public!=true && b.userId != userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        word?:mean?:return responseEntityUtil(wordService.selectByBookId(bookId))
+        if(word!=null&&mean!=null){
+            return responseEntityUtil(wordService.find(bookId,patternUtil(word),patternUtil(mean)))
+        }
+        if(word!=null){
+            return responseEntityUtil(wordService.findByWord(patternUtil(word)))
+        }
+        return responseEntityUtil(wordService.findByMean(patternUtil(mean!!)))
+    }
+
     @GetMapping("/words")
     fun getAllWord(): ResponseEntity<List<Word>>{
         return ResponseEntity.ok(wordService.selectAll())
     }
 
+    @PutMapping("/word/{id}")
+    fun updateWord(@PathVariable(name="id") id:Int,
+                    @RequestBody word: Word): ResponseEntity<String>{
+        val w = wordService.selectById(id)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        // 自分が追加した単語じゃないと編集できない
+        if(w.userId != getUserId(SecurityContextHolder.getContext().authentication))
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(word.word!=null&&word.mean!=null){
+            if(wordService.update(id, word.word!!, word.mean!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        if(word.word!=null){
+            if(wordService.updateWord(id, word.word!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        if(word.mean!=null){
+            if(wordService.updateMean(id, word.mean!!))
+                return ResponseEntity(HttpStatus.OK)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+    @DeleteMapping("/word/{id}")
+    fun deleteWord(@PathVariable(name="id") id:Int): ResponseEntity<String>{
+        val w = wordService.selectById(id)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(w.userId != getUserId(SecurityContextHolder.getContext().authentication))
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(wordService.delete(id))
+            return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+
     @PostMapping("/comment")
     fun postComment(@RequestBody comment: Comment): ResponseEntity<String>{
+        comment.userId = getUserId(SecurityContextHolder.getContext().authentication)
         try {
             commentService.insert(comment)
         } catch (e: DataIntegrityViolationException){
@@ -222,11 +382,33 @@ class ApiController @Autowired constructor(
 
     @GetMapping("/comment")
     fun getComment(@RequestParam(name="bookid", required = false) bookId:Int?,
-                   @RequestParam(name="userId", required = false) userId:Int?):ResponseEntity<List<Comment>>{
+                   @RequestParam(name="userId", required = false) userId:Int?):ResponseEntity<List<CommentAndUserName>>{
         bookId?:userId?:return ResponseEntity(listOf(),HttpStatus.BAD_REQUEST)
         if(bookId!=null)
             return responseEntityUtil(commentService.selectByBookId(bookId))
         return responseEntityUtil(commentService.selectByUserId(userId!!))
+    }
+    @GetMapping("/book/{id}/comment")
+    fun getBookComment(@PathVariable(name="id") bookId: Int): ResponseEntity<List<CommentAndUserName>>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.public!=true && b.userId!=userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        return responseEntityUtil(commentService.selectByBookId(bookId))
+    }
+
+    @PostMapping("/book/{id}/comment")
+    fun postComment(@PathVariable(name="id") bookId: Int,
+                    @RequestBody comment: Comment):ResponseEntity<String>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val b = bookService.selectById(bookId)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.public!=true && b.userId!=userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        comment.bookId = bookId
+        comment.userId = userId
+        if(commentService.insert(comment))
+            return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
     }
 
     @GetMapping("/comments")
@@ -237,6 +419,12 @@ class ApiController @Autowired constructor(
 
     @PostMapping("/rate")
     fun postRate(@RequestBody rate: Rate):ResponseEntity<String>{
+        rate.bookId?:return ResponseEntity(HttpStatus.BAD_REQUEST)
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val b = bookService.selectById(rate.bookId!!)?:return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(b.public!=true && b.userId!=userId)
+            return ResponseEntity(HttpStatus.NOT_FOUND)
+        rate.userId = userId
         try{
             rateService.insert(rate)
         } catch (e: DataIntegrityViolationException){
@@ -269,9 +457,64 @@ class ApiController @Autowired constructor(
         return ResponseEntity.ok(m)
     }
 
+    @GetMapping("/book/{id}/myrate")
+    fun getMyBookRate(@PathVariable(name = "id")bookId: Int): ResponseEntity<Rate>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        return responseEntityUtil(rateService.selectWithBookIdAndUserId(bookId,userId))
+    }
+
     @GetMapping("/rates")
     fun getAllRate(): ResponseEntity<List<Rate>>{
         return ResponseEntity.ok(rateService.selectAll())
+    }
+
+    @PostMapping("/book/{id}/rate")
+    fun postRate(@PathVariable(name = "id") bookId: Int,
+                   @RequestBody rate: Rate): ResponseEntity<String>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        rate.bookId = bookId
+        rate.userId = userId
+        try{
+            rateService.insert(rate)
+        } catch (e: DuplicateKeyException){
+            rateService.updateRate(bookId,userId,rate.rate)
+        } catch (e: DataIntegrityViolationException){
+            return ResponseEntity(null,HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity.ok(null)
+    }
+
+    @PutMapping("/book/{id}/rate")
+    fun updateRate(@PathVariable(name = "id") bookId: Int,
+                   @RequestBody rate: Rate): ResponseEntity<String>{
+        val userId = getUserId(SecurityContextHolder.getContext().authentication)
+        val r = rateService.selectWithBookIdAndUserId(bookId, userId)?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        if(rateService.updateRate(r.rateId!!, rate.rate))
+            return ResponseEntity(HttpStatus.OK)
+        return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+
+    /**
+     * passwordは平文で送ってもらう
+     */
+    @PutMapping("/user/{nameId}")
+    fun updateUser(@RequestBody user:User):ResponseEntity<String>{
+        val nameId = SecurityContextHolder.getContext().authentication.name
+
+        if(user.name!=null){
+            userService.updateDisplayName(nameId, user.name!!)
+        }
+        try {
+            if (!user.password.matches(bcryptRegex)) {
+                val encoder = BCryptPasswordEncoder()
+                user.password = encoder.encode(user.password)
+            }
+            userService.updatePassword(nameId, user.password)
+        }catch (e:NullPointerException){
+        }
+
+        return ResponseEntity(HttpStatus.OK)
     }
 
 }
