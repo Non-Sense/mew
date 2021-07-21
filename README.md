@@ -9,7 +9,12 @@
 1. カレントディレクトリを`docker-compose.yml`があるディレクトリにします  
 1. `docker-compose up -d`を叩く  
 
-サーバはポート8080に繋がっているので、URLは`http://localhost:8080`です  
+- APIサーバの起動
+  - ほっとけばgradleでビルドが走って勝手に起動します
+  - APIサーバはポート8080に繋がっているので、バックエンドのURLは`http://localhost:8080`です  
+
+- フロントエンドサーバの起動
+  - nodeのコンテナに入って`npm run serve`
 
 起動後は`resources/static`以下のファイルは書き換えて保存すれば表示に反映されると思います  
 javaコードはビルドかければ自動でリロードしてくれます。コマンド:`./gradlew classes`
