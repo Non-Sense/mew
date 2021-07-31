@@ -13,7 +13,7 @@
 
       <button type="submit" value="submit" class="login login_button">ログイン</button>
     </form>
-    <router-link to="/signup" class="login_a"><button class="login login_button longin_a">新規登録</button></router-link>
+    <router-link to="/signup" class="login_a"><button class="regi login_button longin_a">新規登録</button></router-link>
     
   <span v-cloak>{{ msg }}</span>
   </div>
@@ -62,6 +62,7 @@ export default {
 </script>
 
 <style>
+
 h2 {
   color: rgb(144, 143, 228);
   text-align: center;

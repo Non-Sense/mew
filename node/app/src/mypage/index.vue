@@ -1,22 +1,14 @@
 <template>
   <div class="taisei_Mbody">
     <div class="taisei_top">
-      <ul>
-        <li>
-          <p>MyPage List</p>
-        </li>
-        <li>
-          <input v-model="search" v-on:change="findMyBooks" type="text" placeholder="    Search"/>
-        </li>
-        <li>
-          <button @click="$router.push('/mypage/new_post')">New Post</button>
-        </li>
-      </ul>
+      <p>MyPage List</p>
+      <input v-model="search" v-on:change="findMyBooks" type="text" placeholder="    Search"/>
+      <button @click="$router.push('/mypage/new_post')">New Post</button>
     </div>
     
     <div class="taisei_title">
-      <ul v-for="item in items" v-bind:key="item.bookId" v-show="showFlag">
-        <li>
+      <ul>
+        <li v-for="item in items" v-bind:key="item.bookId" v-show="showFlag">
           <input type="button" @click="$router.push({name:'mypage-index',params:{ id: clickEdit(item.bookId) }})" v-bind:value="item.title" />
           <button @click="$router.push({name:'mypage-edit',params:{ id: clickEdit(item.bookId) }})">Edit</button>
         </li>
@@ -24,10 +16,10 @@
       </ul>
     </div>
 
-    <div class="taisei_share">
+    <div class="taisei_title">
       <p>sharing</p>
-      <ul v-for="item in sharingItems" v-bind:key="item.bookId" v-show="showFlag">
-        <li>
+      <ul>
+        <li v-for="item in sharingItems" v-bind:key="item.bookId" v-show="showFlag">
           <input type="button" @click="$router.push({name:'mypage-index',params:{ id: clickEdit(item.bookId) }})" v-bind:value="item.title" />
         </li>
       </ul>

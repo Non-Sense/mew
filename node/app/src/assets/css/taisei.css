@@ -1,40 +1,53 @@
 .taisei_Mbody{
   background-color: #FFFFFF;
   margin: 0;
+  padding: 0 150px;
 }
 
 .taisei_top{
-  margin-top: 20vh;
-  margin-left: 10vw;
+  margin-top: 127px;
+  /* margin-top: 20vh;
+  margin-left: 10vw; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.taisei_top p{
+  color: #666;
+  font-size: 32px;
+  margin-right: 32px;
+  display: inline-block;
+  /* margin-top: 20vh;
+  margin-left: 10vw; */
 }
 
 .taisei_top ul{
-  margin: 0;
+  /* margin: 0;
   padding: 0;
   list-style-type: none;
-  display: flex;
+  display: flex; */
 }
 
 .taisei_top ul li{
-  margin-right: 8vw;
+  /* margin-right: 8vw; */
 }
 
 .taisei_top p{
-  font-family: Roboto;
+  /* font-family: Roboto;
   font-style: normal;
   font-weight: normal;
-  font-size: 4vmin;
+  font-size: 4vmin; */
 
 
-  align-items: center;
+  /* align-items: center;
 
-  color: #666666
+  color: #666666 */
 }
 
 .taisei_top input {
-  margin-top: 3vh;
+  /* ?margin-top: vh; */
   width: 38vw;
-  height: 6.8vh;
+  height: 40px;
   
   background-color: #F6F7FB;
   border-radius: 16px;
@@ -43,49 +56,47 @@
 }
 
 .taisei_top input::-webkit-input-placeholder{
-  color: #C4C4C4;
-  font-weight: bold;
+  /* color: #C4C4C4;
+  font-weight: bold; */
 }
 
 .taisei_top input::-moz-placeholder{
-  color: #C4C4C4;
-  font-weight: bold;
+  /* color: #C4C4C4;
+  font-weight: bold; */
 }
 
 .taisei_top input::-moz-placeholder{
-  color: #C4C4C4;
-  font-weight: bold;
+  /* color: #C4C4C4;
+  font-weight: bold; */
 }
 
 .taisei_top input::-ms-input-placeholder{
-  color: #C4C4C4;
-  font-weight: bold;
+  /* color: #C4C4C4;
+  font-weight: bold; */
 }
 
 .taisei_top button {
-  margin-top: 1vh;
-  width: 14.8vw;
-  height: 10.5vh;
+  width: 188px;
+  height: 64px;
   
   font-family: Roboto;
   font-style: normal;
   font-weight: normal;
-  font-size: 2vw;
+  font-size: 24px;
 
   color: #FFFFFF;
-  background-color: #7B89C9;
+  background-color: rgb(144, 143, 228);
   border-radius: 8px;
   border-style: none;
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .taisei_top button:hover{
-  opacity: 1.0;
+  opacity: 0.8;
 }
 
 .taisei_title{
   margin-top: 5vh;
-  margin-left: 10vw;
 }
 
 .taisei_title ul{
@@ -94,18 +105,33 @@
   list-style-type: none;
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
+  /* display: inline-block; */
+  width: 100%;
 }
 
+.taisei_title ul::after{
+  content:"";
+  display: block;
+  width:0;
+  height: 0;
+}
+
+
 .taisei_title ul li{
-  margin-right: 11vw;
-  margin-bottom: 7vh;
+  
+  margin-bottom: 48px;
+  font-size: 16px;
+  font-weight: normal;
+  display: inline-block;
+  width: 48%;
 }
 
 .taisei_title input{
   text-align: left;
 
-  width: 34.5vw;
-  height: 8.0vh;
+  width: 100%;
+  height: 48px;
 
   font-family: Roboto;
   font-style: normal;
@@ -118,21 +144,20 @@
 }
 
 .taisei_title button{
-  margin-left: -5vw;
   align-items: center;
-  font-size: 1.4vw;
+  font-size: 18px;
   color: #c6c6c6;
   background-color: #F6F7FB;
   border-style: none;
   padding: 0;
+  margin: -55px;
 }
 
 .taisei_share{
   margin-top: 5vh;
-  margin-left: 10vw;
 }
 
-.taisei_share p{
+.taisei_title p{
   font-family: Noto Sans JP;
   font-style: normal;
   font-weight: normal;
@@ -150,16 +175,24 @@
   list-style-type: none;
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+
+.taisei_share ul::after{
+  content:"";
+  display: block;
+  width:0;
+  height: 0;
 }
 
 .taisei_share ul li{
-  margin-right: 11vw;
   margin-bottom: 7vh;
 }
 
 .taisei_share input{
   width: 34.5vw;
-  height: 8.0vh;
+  height: 48px;
   text-align: left;
 
   font-family: Roboto;
